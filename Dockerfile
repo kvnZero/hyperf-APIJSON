@@ -42,10 +42,11 @@ RUN set -ex \
 
 WORKDIR /opt/www
 
+COPY . /opt/www
+
 RUN composer config -g repo.packagist composer https://mirrors.aliyun.com/composer
 RUN composer install --no-dev --no-scripts
 
-COPY . /opt/www
 
 EXPOSE 9501
 

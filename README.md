@@ -50,6 +50,6 @@ https://github.com/Tencent/APIJSON/commits/master
 ```shell
 # 打包镜像
 docker build -t hyperf-apijson:v1 .
-#启动容器
-docker run -dit --name hyperf-apijson hyperf-apijson:v1
+#启动容器 映射本地9501端口
+docker run -dit --name hyperf-apijson hyperf-apijson:v1 -p 9501:9501
 ```
