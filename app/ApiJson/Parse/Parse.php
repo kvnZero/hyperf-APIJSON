@@ -6,7 +6,6 @@ use App\ApiJson\Model\Model;
 use App\Constants\ResponseCode;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Utils\Arr;
-use Laminas\Stdlib\ArrayUtils;
 
 class Parse
 {
@@ -225,9 +224,7 @@ class Parse
                         break;
                     case '@group':
                         $groupArr = explode(',', $value);
-                        foreach ($groupArr as $group) {
-                            $model->getDb()->groupBy($group);
-                        }
+                        $model->getDb()->groupBy($groupArr);
                         break;
                     case '@having':
                         $havingArr = explode(';', $value);

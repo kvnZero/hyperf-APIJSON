@@ -8,15 +8,15 @@ use Hyperf\DbConnection\Db;
 class Model
 {
     /** @var bool $queryMany */
-    protected $queryMany = false;
+    protected bool $queryMany = false;
 
     /** @var Builder */
-    protected $db;
+    protected Builder $db;
 
     /** @var string $primaryKey */
-    protected $primaryKey = 'id';
+    protected string $primaryKey = 'id';
 
-    public function __construct(string $tableName)
+    public function __construct(protected string $tableName)
     {
         $this->db = Db::table($tableName);
     }

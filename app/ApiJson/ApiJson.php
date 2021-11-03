@@ -9,16 +9,8 @@ use Psr\Log\LogLevel;
 
 class ApiJson
 {
-    /** @var array $request */
-    protected $request;
-
-    /** @var string $method */
-    protected $method;
-
-    public function __construct(RequestInterface $request, string $method)
+    public function __construct(protected RequestInterface $request, protected string $method)
     {
-        $this->request = $request;
-        $this->method = $method;
     }
 
     public function Query(): array
