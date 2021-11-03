@@ -1,8 +1,8 @@
 <?php
 
-namespace App\ApiJson\Method;
+namespace App\ApiJson\Handle;
 
-class FunctionOrderHandle extends MethodHandleInterface
+class FunctionOrderHandle extends AbstractMethodHandle
 {
     protected function validateCondition(): bool
     {
@@ -13,7 +13,7 @@ class FunctionOrderHandle extends MethodHandleInterface
     {
         $orderArr = explode(',', $this->value);
         foreach ($orderArr as $order) {
-            $this->builder->orderBy(str_replace(['-', '+'], '', $order), str_ends_with($order, '-') ? 'desc' : 'asc');
+            $this->query->orderBy(str_replace(['-', '+'], '', $order), str_ends_with($order, '-') ? 'desc' : 'asc');
         }
     }
 }

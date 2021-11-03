@@ -1,8 +1,8 @@
 <?php
 
-namespace App\ApiJson\Method;
+namespace App\ApiJson\Handle;
 
-class FunctionColumnHandle extends MethodHandleInterface
+class FunctionColumnHandle extends AbstractMethodHandle
 {
     protected function validateCondition(): bool
     {
@@ -12,6 +12,6 @@ class FunctionColumnHandle extends MethodHandleInterface
     protected function buildModel()
     {
         $this->value = str_replace([';',':'], [',', ' AS '], $this->value);
-        $this->builder->select(explode(',', $this->value));
+        $this->query->select(explode(',', $this->value));
     }
 }

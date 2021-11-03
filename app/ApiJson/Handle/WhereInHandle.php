@@ -1,8 +1,8 @@
 <?php
 
-namespace App\ApiJson\Method;
+namespace App\ApiJson\Handle;
 
-class WhereInHandle extends MethodHandleInterface
+class WhereInHandle extends AbstractMethodHandle
 {
     protected function validateCondition(): bool
     {
@@ -11,6 +11,6 @@ class WhereInHandle extends MethodHandleInterface
 
     protected function buildModel()
     {
-        $this->builder->whereIn($this->sanitizeKey, $this->value);
+        $this->query->whereIn($this->sanitizeKey, $this->value);
     }
 }

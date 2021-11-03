@@ -1,8 +1,8 @@
 <?php
 
-namespace App\ApiJson\Method;
+namespace App\ApiJson\Handle;
 
-class FunctionHavingHandle extends MethodHandleInterface
+class FunctionHavingHandle extends AbstractMethodHandle
 {
     protected function validateCondition(): bool
     {
@@ -13,7 +13,7 @@ class FunctionHavingHandle extends MethodHandleInterface
     {
         $havingArr = explode(';', $this->value);
         foreach ($havingArr as $having) {
-            $this->builder->havingRaw($having);
+            $this->query->having($having);
         }
     }
 }

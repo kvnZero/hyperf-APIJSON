@@ -1,8 +1,8 @@
 <?php
 
-namespace App\ApiJson\Method;
+namespace App\ApiJson\Handle;
 
-class WhereLikeHandle extends MethodHandleInterface
+class WhereLikeHandle extends AbstractMethodHandle
 {
     protected function validateCondition(): bool
     {
@@ -16,6 +16,6 @@ class WhereLikeHandle extends MethodHandleInterface
         foreach ($value as $item) {
             $sql[] = sprintf("%s LIKE %s", $this->sanitizeKey, trim($item));
         }
-        $this->builder->whereRaw(join(' OR ', $sql)); //3.2.3
+        $this->query->whereRaw(join(' OR ', $sql)); //3.2.3
     }
 }

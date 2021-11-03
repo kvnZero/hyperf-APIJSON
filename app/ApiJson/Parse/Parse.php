@@ -2,48 +2,45 @@
 
 namespace App\ApiJson\Parse;
 
-use App\ApiJson\Model\Model;
+use App\ApiJson\Entity\TableEntity;
 use App\Constants\ResponseCode;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Utils\Arr;
 
 class Parse
 {
-    /** @var string $tableName */
-    protected $tableName;
+    protected array $tagColumn = [
+        'tag' => null
+    ];
 
-    /** @var array $json */
-    protected $json;
+    protected array $tableEntities = [];
 
-    /** @var string $method */
-    protected $method;
-
-    /** @var string $tag */
-    protected $tag;
-
-    public function __construct($json, $method = 'GET', $tag = '')
+    public function __construct(protected array $json, protected string $method = 'GET', protected string $tag = '')
     {
-        if (is_string($json)) {
-            $this->json = json_decode($json, true);
-        } else {
-            $this->json = $json;
-        }
-        $this->method = $method;
-        $this->tag = $tag;
     }
 
     public function handle(): array
     {
-        $model = $this->parseModel();
-        if (in_array($this->method, ['GET', 'HEAD'])) {
-            $model = $this->parseQueryJson($model, $this->json);
+        $result = [];
+        foreach ($this->json as $tableName => $condition) {
+            if (in_array($tableName, $this->filterKey())) {
+                $this->tagColumn[$tableName] = $condition; //特殊
+                break;
+            }
+            $this->tableEntities[$tableName] = new TableEntity($tableName, $condition);
+            $result[$tableName] = [
+                'code' => ResponseCode::SUCCESS,
+                'msg' => ResponseCode::getMessage(ResponseCode::SUCCESS),
+            ];
+
         }
-        return [$this->tableName => $this->parseResponse($model)];
+        //TODO: 抽象操作方法
+        return $result;
     }
 
-    protected function handleGet(Model $model): array
+    protected function filterKey(): array
     {
-        return $model->getDb()->get()->all();
+        return array_keys($this->tagColumn);
     }
 
     protected function handleHead(Model $model): array

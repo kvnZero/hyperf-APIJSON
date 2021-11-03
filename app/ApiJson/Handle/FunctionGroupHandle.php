@@ -1,8 +1,8 @@
 <?php
 
-namespace App\ApiJson\Method;
+namespace App\ApiJson\Handle;
 
-class FunctionGroupHandle extends MethodHandleInterface
+class FunctionGroupHandle extends AbstractMethodHandle
 {
     protected function validateCondition(): bool
     {
@@ -12,6 +12,6 @@ class FunctionGroupHandle extends MethodHandleInterface
     protected function buildModel()
     {
         $groupArr = explode(',', $this->value);
-        $this->builder->groupBy($groupArr);
+        $this->query->groupBy($groupArr);
     }
 }

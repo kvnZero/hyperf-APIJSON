@@ -1,8 +1,8 @@
 <?php
 
-namespace App\ApiJson\Method;
+namespace App\ApiJson\Handle;
 
-class WhereRegexpHandle extends MethodHandleInterface
+class WhereRegexpHandle extends AbstractMethodHandle
 {
     protected function validateCondition(): bool
     {
@@ -16,6 +16,6 @@ class WhereRegexpHandle extends MethodHandleInterface
         foreach ($value as $item) {
             $sql[] = sprintf("%s REGEXP %s", $this->sanitizeKey, trim($item));
         }
-        $this->builder->whereRaw(join(' OR ', $sql)); //3.2.3
+        $this->query->whereRaw(join(' OR ', $sql)); //3.2.3
     }
 }

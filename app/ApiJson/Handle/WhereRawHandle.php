@@ -1,8 +1,8 @@
 <?php
 
-namespace App\ApiJson\Method;
+namespace App\ApiJson\Handle;
 
-class WhereRawHandle extends MethodHandleInterface
+class WhereRawHandle extends AbstractMethodHandle
 {
     protected function validateCondition(): bool
     {
@@ -16,6 +16,6 @@ class WhereRawHandle extends MethodHandleInterface
         foreach ($conditionArr as $condition) {
             $sql[] = sprintf("`%s`%s", $this->sanitizeKey, trim($condition));
         }
-        $this->builder->whereRaw(join(' OR ', $sql)); //3.2.3
+        $this->query->whereRaw(join(' OR ', $sql)); //3.2.3
     }
 }

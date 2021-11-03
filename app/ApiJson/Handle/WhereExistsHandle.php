@@ -1,10 +1,10 @@
 <?php
 
-namespace App\ApiJson\Method;
+namespace App\ApiJson\Handle;
 
 use Hyperf\Database\Query\Builder;
 
-class WhereExistsHandle extends MethodHandleInterface
+class WhereExistsHandle extends AbstractMethodHandle
 {
     protected function validateCondition(): bool
     {
@@ -13,7 +13,7 @@ class WhereExistsHandle extends MethodHandleInterface
 
     protected function buildModel()
     {
-        $this->builder->whereExists(function(Builder $query) {
+        $this->query->whereExists(function(Builder $query) {
             $query = $query->from($this->value['from']);
 
             //这里应该再接入处理列表

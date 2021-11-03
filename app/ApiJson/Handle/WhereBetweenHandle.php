@@ -1,8 +1,8 @@
 <?php
 
-namespace App\ApiJson\Method;
+namespace App\ApiJson\Handle;
 
-class WhereBetweenHandle extends MethodHandleInterface
+class WhereBetweenHandle extends AbstractMethodHandle
 {
     protected function validateCondition(): bool
     {
@@ -17,6 +17,6 @@ class WhereBetweenHandle extends MethodHandleInterface
             $itemArr = explode(',', $item);
             $sql[] = sprintf("%s BETWEEN %s AND %s", $this->sanitizeKey, trim($itemArr[0]), trim($itemArr[1]));
         }
-        $this->builder->whereRaw(join(' OR ', $sql)); //3.2.3
+        $this->query->whereRaw(join(' OR ', $sql)); //3.2.3
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\ApiJson\Method;
+namespace App\ApiJson\Handle;
 
-class WhereJsonContainsHandle extends MethodHandleInterface
+class WhereJsonContainsHandle extends AbstractMethodHandle
 {
     protected function validateCondition(): bool
     {
@@ -16,6 +16,6 @@ class WhereJsonContainsHandle extends MethodHandleInterface
         foreach ($value as $item) {
             $sql[] = sprintf("json_contains(%s,%s)", $this->sanitizeKey, trim($item));
         }
-        $this->builder->whereRaw(join(' OR ', $sql)); //3.2.3
+        $this->query->whereRaw(join(' OR ', $sql)); //3.2.3
     }
 }
