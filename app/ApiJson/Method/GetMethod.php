@@ -23,6 +23,6 @@ class GetMethod extends AbstractMethod
         $result = $this->query->all();
         !$queryMany && $result = current($result);
 
-        return $result;
+        return $result ?: [];
     }
 }
