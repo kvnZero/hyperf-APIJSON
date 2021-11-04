@@ -9,6 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
+use App\ApiJson\Interface\QueryInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -28,4 +30,5 @@ return [
             LogLevel::WARNING,
         ],
     ],
+    QueryInterface::class => \App\ApiJson\Model\MysqlQuery::class
 ];
