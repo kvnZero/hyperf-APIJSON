@@ -2,7 +2,7 @@
 
 namespace App\ApiJson\Handle;
 
-class WhereBetweenHandle extends AbstractMethodHandle
+class WhereBetweenHandle extends AbstractHandle
 {
     protected function validateCondition(): bool
     {

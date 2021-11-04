@@ -4,7 +4,7 @@ namespace App\ApiJson\Handle;
 
 use App\ApiJson\Interface\QueryInterface;
 
-abstract class AbstractMethodHandle
+abstract class AbstractHandle
 {
     /** @var string 清洗后的查询key */
     protected string $sanitizeKey;

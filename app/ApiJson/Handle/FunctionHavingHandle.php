@@ -2,7 +2,7 @@
 
 namespace App\ApiJson\Handle;
 
-class FunctionHavingHandle extends AbstractMethodHandle
+class FunctionHavingHandle extends AbstractHandle
 {
     protected function validateCondition(): bool
     {

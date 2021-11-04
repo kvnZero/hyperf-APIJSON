@@ -2,8 +2,6 @@
 
 namespace App\ApiJson\Entity;
 
-use App\ApiJson\Interface\QueryInterface;
-
 class TableEntity
 {
     /** @var ConditionEntity $ConditionEntity */
@@ -12,71 +10,51 @@ class TableEntity
     /** @var string $realTableName 真实表名 */
     protected string $realTableName;
 
-    /** @var array $condition */
-    protected array $condition;
-
-    /** @var QueryInterface $query */
-    protected QueryInterface $query;
+    /** @var array $content 表名对应的数据 */
+    protected array $content;
 
     /**
      * @param string $tableName 表名
-     * @param array $jsonContent json数据
+     * @param array $jsonContent json源数据
      */
     public function __construct(protected string $tableName, protected array $jsonContent)
     {
-        $this->realTableName = $tableName;
-        $this->condition = $this->getConditionByContent();
-    }
-
-    public function getResult(): array
-    {
-        $this->buildQuery();
+        $sanitizeTableName = str_replace(['[]'], '', $this->tableName);
+        $this->realTableName = $sanitizeTableName;
+        $this->content = $this->getContentByTableName();
         $this->parseConditionEntity();
-        return $this->formatResult($this->query->all());
     }
 
-    public function getCount(): int
+    public function getTableName(): string
     {
-        $this->buildQuery();
-        $this->parseConditionEntity();
-        return $this->query->count();
+        return $this->tableName;
     }
 
-    public function insert()
+    public function getRealTableName(): string
     {
-
+        return $this->realTableName;
     }
 
-    public function update()
+    public function getContent(): array
     {
-
+        return $this->content;
     }
 
-    protected function formatResult(array $result): array
+    public function getConditionEntity(): ConditionEntity
     {
-        return $result;
+        return $this->conditionEntity;
     }
 
-    protected function buildQuery()
+    protected function getContentByTableName(): array
     {
-        $this->query = new (config(join('.', [
-            'dependencies', QueryInterface::class
-        ])))($this->realTableName);
+        $content = $this->jsonContent[$this->tableName];
+        if (isset($content[$this->realTableName])) $content = $content[$this->realTableName];
+        return $content;
     }
 
     protected function parseConditionEntity()
     {
-        $entity = new ConditionEntity($this->condition);
+        $entity = new ConditionEntity($this->content);
         $this->conditionEntity = $entity;
-    }
-
-    protected function getConditionByContent(): array
-    {
-        $sanitizeTableName = str_replace(['[]'], '', $this->tableName);
-        if (isset($this->jsonContent[$sanitizeTableName])) {
-            $this->realTableName = $sanitizeTableName;
-            return $this->jsonContent[$sanitizeTableName];
-        }
-        return $this->jsonContent[$this->tableName];
     }
 }

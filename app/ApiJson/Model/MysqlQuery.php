@@ -103,6 +103,11 @@ class MysqlQuery implements QueryInterface
         return $this->db->update($values);
     }
 
+    public function delete($id = null): bool
+    {
+        return $this->db->delete($id);
+    }
+
     public function having($column, $operator = null, $value = null, $boolean = 'and'): self
     {
        $this->db->having($column, $operator, $value, $boolean);

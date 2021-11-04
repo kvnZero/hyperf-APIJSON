@@ -2,7 +2,7 @@
 
 namespace App\ApiJson\Handle;
 
-class FunctionColumnHandle extends AbstractMethodHandle
+class FunctionColumnHandle extends AbstractHandle
 {
     protected function validateCondition(): bool
     {

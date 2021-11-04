@@ -15,7 +15,7 @@ class ApiJson
 
     public function Query(): array
     {
-        $parse = new Parse($this->request->getBody()->getContents(), $this->method, $this->request->input('tag', ''));
+        $parse = new Parse(json_decode($this->request->getBody()->getContents(), true), $this->method, $this->request->input('tag', ''));
         return array_merge([
             'code' => ResponseCode::SUCCESS,
             'msg' => ResponseCode::getMessage(ResponseCode::SUCCESS)

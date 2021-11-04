@@ -4,7 +4,7 @@ namespace App\ApiJson\Handle;
 
 use Hyperf\Database\Query\Builder;
 
-class WhereExistsHandle extends AbstractMethodHandle
+class WhereExistsHandle extends AbstractHandle
 {
     protected function validateCondition(): bool
     {

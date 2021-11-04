@@ -8,6 +8,10 @@ interface QueryInterface
 {
     public function __construct(string $tableName);
 
+    public function setPrimaryKey(string $primaryKey): void;
+
+    public function getPrimaryKey(): string;
+
     public function where(string $column, $operator = null, $value = null, string $boolean = 'and'): self;
 
     public function whereIn(string $column, array $values, string $boolean = 'and', $not = false): self;
@@ -31,6 +35,8 @@ interface QueryInterface
     public function insertGetId(array $values, $sequence = null): int;
 
     public function update(array $values): bool;
+
+    public function delete($id = null): bool;
 
     public function all();
 

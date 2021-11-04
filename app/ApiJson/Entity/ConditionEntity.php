@@ -3,7 +3,7 @@
 namespace App\ApiJson\Entity;
 
 use App\ApiJson\Interface\QueryInterface;
-use App\ApiJson\Handle\AbstractMethodHandle;
+use App\ApiJson\Handle\AbstractHandle;
 use App\ApiJson\Handle\FunctionColumnHandle;
 use App\ApiJson\Handle\FunctionGroupHandle;
 use App\ApiJson\Handle\FunctionHavingHandle;
@@ -21,7 +21,7 @@ class ConditionEntity
 {
     /**
      * 匹配规则 根据从上自下优先先匹先出
-     * @var AbstractMethodHandle[]
+     * @var AbstractHandle[]
      */
     protected array $methodRules = [
         FunctionColumnHandle::class,
