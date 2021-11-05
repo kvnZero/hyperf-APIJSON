@@ -2,6 +2,8 @@
 
 namespace App\ApiJson\Entity;
 
+use App\ApiJson\Handle\FunctionLimitHandle;
+use App\ApiJson\Handle\FunctionOffsetHandle;
 use App\ApiJson\Interface\QueryInterface;
 use App\ApiJson\Handle\AbstractHandle;
 use App\ApiJson\Handle\FunctionColumnHandle;
@@ -18,6 +20,8 @@ use App\ApiJson\Handle\WhereRawHandle;
 use App\ApiJson\Handle\WhereRegexpHandle;
 use App\ApiJson\Method\AbstractMethod;
 use App\ApiJson\Replace\AbstractReplace;
+use App\ApiJson\Replace\KeywordCountReplace;
+use App\ApiJson\Replace\KeywordPageReplace;
 use App\ApiJson\Replace\QuoteReplace;
 
 class ConditionEntity
@@ -27,6 +31,8 @@ class ConditionEntity
      * @var AbstractReplace[]
      */
     protected array $replaceRules = [
+        KeywordCountReplace::class,
+        KeywordPageReplace::class,
         QuoteReplace::class,
     ];
 
@@ -38,6 +44,8 @@ class ConditionEntity
     protected array $methodRules = [
         FunctionColumnHandle::class,
         FunctionHavingHandle::class,
+        FunctionOffsetHandle::class,
+        FunctionLimitHandle::class,
         FunctionGroupHandle::class,
         FunctionOrderHandle::class,
         WhereJsonContainsHandle::class,
@@ -57,14 +65,13 @@ class ConditionEntity
     {
     }
 
-    protected function replaceHandle($key, $value): array
+    protected function replaceHandle($key, $value, array $condition = []): array
     {
         foreach ($this->replaceRules as $rule) {
             /** @var AbstractReplace $replaceRule */
-            $replaceRule = new $rule($key, $value);
+            $replaceRule = new $rule($key, $value, $condition, $this->extendData);
             $response = $replaceRule->handle();
-            if (is_null($response)) break;
-            return $response;
+            if (!is_null($response)) return $response;
         }
         return [$key, $value];
     }
@@ -75,10 +82,9 @@ class ConditionEntity
     public function setQueryCondition(QueryInterface $query)
     {
         foreach ($this->condition as $key => $value) {
+            [$key, $value] = $this->replaceHandle($key, $value, $this->condition); //解决引用问题
             /** @var AbstractMethod $rule */
             foreach ($this->methodRules as $rule) {
-                [$key, $value] = $this->replaceHandle($key, $value); //解决引用问题
-
                 $methodRule = new $rule($query, $key, $value);
                 if ($methodRule->handle()) break;
             }

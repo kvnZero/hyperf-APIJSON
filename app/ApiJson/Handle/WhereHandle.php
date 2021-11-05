@@ -11,6 +11,6 @@ class WhereHandle extends AbstractHandle
 
     protected function buildModel()
     {
-        $this->query->where($this->sanitizeKey, $this->value);
+        $this->query->where($this->sanitizeKey, '=', $this->value);
     }
 }

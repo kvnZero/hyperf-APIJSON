@@ -16,13 +16,18 @@ class GetMethod extends AbstractMethod
         $conditionEntity = $this->tableEntity->getConditionEntity();
         $conditionEntity->setQueryCondition($this->query);
 
-        $queryMany = str_ends_with($this->tableEntity->getTableName(), '[]');
+        $queryMany = $this->isQueryMany();
         if (!$queryMany) {
             $this->query->limit(1);
         }
         $result = $this->query->all();
-        !$queryMany && $result = current($result);
-
+        if ($queryMany) {
+            foreach ($result as $key => $item) {
+                $result[$key] = [$this->tableEntity->getTableName() => $item];
+            }
+        } else {
+            $result = current($result);
+        }
         return $result ?: [];
     }
 }

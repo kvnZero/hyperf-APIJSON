@@ -9,12 +9,16 @@ use App\ApiJson\Method\GetMethod;
 use App\ApiJson\Method\HeadMethod;
 use App\ApiJson\Method\PostMethod;
 use App\ApiJson\Method\PutMethod;
-use App\Constants\ResponseCode;
 
 class Parse
 {
     protected array $tagColumn = [
         'tag' => null
+    ];
+
+    protected array $globalKey = [
+        'count' => null,
+        'page' => null,
     ];
 
     protected array $supMethod = [
@@ -31,21 +35,35 @@ class Parse
     {
     }
 
-    public function handle(): array
+    public function handle(bool $isQueryMany = false): array
     {
-        $result = [
-            'code' => ResponseCode::SUCCESS,
-            'msg' => ResponseCode::getMessage(ResponseCode::SUCCESS),
-        ];
-        $this->jsonParse();
+        $result = [];
         foreach ($this->json as $tableName => $condition) { //可以优化成协程行为（如果没有依赖赋值的前提下）
-            $this->tableEntities[$tableName] = new TableEntity($tableName, $this->json, $result);
+            if (in_array($tableName, $this->filterKey())) {
+                $this->tagColumn[$tableName] = $condition;
+                continue;
+            }
+            if (in_array($tableName, $this->globalKey())) {
+                $this->globalKey[$tableName] = $condition;
+                continue;
+            }
+            if ($tableName == '[]') {
+                $parse = new self($condition, $this->method, $condition['tag'] ?? '');
+                $result[$tableName] = $parse->handle(true); //提供行为
+                continue; //跳出不往下执行
+            }
+            $this->tableEntities[$tableName] = new TableEntity($tableName, $this->json, $this->getGlobalArgs(), $result);
             foreach ($this->supMethod as $methodClass) {
                 /** @var AbstractMethod $method */
                 $method = new $methodClass($this->tableEntities[$tableName], $this->method);
+                $method->setQueryMany($isQueryMany);
                 $response = $method->handle();
                 if (!is_null($response)) {
-                    $result[$condition['*'] ?? $tableName] = $response;
+                    if ($isQueryMany) {
+                        $result = $response;
+                    } else {
+                        $result[$tableName] = $response;
+                    }
                     break;
                 }
             }
@@ -54,34 +72,18 @@ class Parse
         return $result;
     }
 
-    /**
-     * 整理不同形式的json数据到统一格式再处理
-     */
-    protected function jsonParse()
-    {
-        foreach ($this->json as $tableName => $condition) { //可以优化成协程行为（如果没有依赖赋值的前提下）
-            if (in_array($tableName, $this->filterKey())) {
-                $this->tagColumn[$tableName] = $condition; //特殊
-                unset($this->json[$tableName]);
-                break;
-            }
-            if ($tableName == '[]') {
-                $count = (int)$condition['count'] ?? 10;
-                $page = (int)$condition['page'] ?? 1; //赋予默认值
-                $tableName = array_key_first($condition); //剩下的值为table
-                $condition = $condition[$tableName]; //替换条件
-                $condition = array_merge($condition, [
-                    '@limit' => $count, //查询长度
-                    '@offset' => $page * $count, //查询起始长度
-                    '*' => '[]' //赋予替换表明的标志
-                ]);
-                $this->json[$tableName . '[]'] = $condition;
-            }
-        }
-    }
-
     protected function filterKey(): array
     {
         return array_keys($this->tagColumn);
+    }
+
+    protected function getGlobalArgs(): array
+    {
+        return array_filter($this->globalKey);
+    }
+
+    protected function globalKey(): array
+    {
+        return array_keys($this->globalKey);
     }
 }

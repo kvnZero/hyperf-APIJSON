@@ -4,7 +4,7 @@ namespace App\ApiJson\Replace;
 
 abstract class AbstractReplace
 {
-    public function __construct(protected string $key, protected $value, protected array $extendData)
+    public function __construct(protected string $key, protected $value, protected $condition, protected array $extendData)
     {
     }
 
