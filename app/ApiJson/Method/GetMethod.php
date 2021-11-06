@@ -2,8 +2,6 @@
 
 namespace App\ApiJson\Method;
 
-use App\ApiJson\Interface\QueryInterface;
-
 class GetMethod extends AbstractMethod
 {
     protected function validateCondition(): bool

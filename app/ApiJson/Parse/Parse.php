@@ -9,11 +9,13 @@ use App\ApiJson\Method\GetMethod;
 use App\ApiJson\Method\HeadMethod;
 use App\ApiJson\Method\PostMethod;
 use App\ApiJson\Method\PutMethod;
+use Hyperf\Utils\Context;
 
 class Parse
 {
     protected array $tagColumn = [
-        'tag' => null
+        'tag' => null,
+        'debug' => false
     ];
 
     protected array $globalKey = [
@@ -47,9 +49,8 @@ class Parse
                 $this->globalKey[$tableName] = $condition;
                 continue;
             }
-            if ($tableName == '[]') {
-                $parse = new self($condition, $this->method, $condition['tag'] ?? '');
-                $result[$tableName] = $parse->handle(true, array_merge($result, $extendData)); //提供行为
+            if ($tableName == '[]' && $this->method == 'GET') {
+                $result[$tableName] = $this->handleArray($condition, array_merge($result, $extendData)); //提供行为
                 continue; //跳出不往下执行
             }
             if (str_ends_with($tableName, '[]')) {
@@ -70,7 +71,50 @@ class Parse
                 }
             }
         }
-        //TODO: 抽象操作方法
+        return $this->resultExtendHandle($result);
+    }
+
+    protected function resultExtendHandle(array $result)
+    {
+        if ($this->tagColumn['debug']) {
+            $result['debug'] = (new Context())->get('querySql');
+        }
+        return $result;
+    }
+
+    /**
+     * 处理[]的数据
+     * @param array $jsonData
+     * @param array $extendData
+     * @return array
+     */
+    protected function handleArray(array $jsonData, array $extendData = []): array
+    {
+        $result = [[]];
+        foreach ($jsonData as $tableName => $condition) { //可以优化成协程行为（如果没有依赖赋值的前提下）
+            foreach ($result as $key => $item) {
+                if (in_array($tableName, $this->filterKey())) {
+                    $this->tagColumn[$tableName] = $condition;
+                    continue;
+                }
+                if (in_array($tableName, $this->globalKey())) {
+                    $this->globalKey[$tableName] = $condition;
+                    continue;
+                }
+                $extendData['currentItem'] = $item;
+                $this->tableEntities['[]'][$tableName] = new TableEntity($tableName, $jsonData, $this->getGlobalArgs(), array_merge($result, $extendData));
+                $method = new GetMethod($this->tableEntities['[]'][$tableName], $this->method);
+                $method->setQueryMany($result == [[]]);
+                $response = $method->handle();
+                if (!is_null($response)) {
+                    if ($result == [[]]) {
+                        $result = $response; //masterData
+                    } else {
+                        $result[$key][$tableName] = $response;
+                    }
+                }
+            }
+        }
         return $result;
     }
 
