@@ -38,10 +38,16 @@ https://github.com/Tencent/APIJSON/commits/master
 1. ✅最基本CRUD 包括批量写入 批量更新 批量删除
 2. ✅支持@column @having @order @group
 3. ✅支持运算符 {}, <>, }{@, $, %, ~
+4. ✅支持多表查询、一对一查询、一对多查询、数组内多对多查询
+5. ✅支持数组内count/page
+6. ✅支持debug标签可返回语句执行
 
-待完成：子查询, 复杂查询, 嵌套查询, 存储过程调用，远程函数，权限
+待完成：子查询, 存储过程调用，远程函数，权限，标签，<b>单元测试（高优先）</b>
+
 
 ### 如何使用 
+
+Postman文档（调试过程中保存）：https://documenter.getpostman.com/view/7711046/UVC3jStM
 
 拉取该项目, 配置mysql数据库, 配置文件路径：`config\autoload\databases.php`
 
@@ -52,4 +58,17 @@ https://github.com/Tencent/APIJSON/commits/master
 docker build -t hyperf-apijson:v1 .
 #启动容器 映射本地9501端口
 docker run -dit --name hyperf-apijson -p 9501:9501 hyperf-apijson:v1
+```
+
+如果需要进行开发调试，使用Hyperf的Docker环境
+
+```shell
+docker run -dit --name hyperf-apijson -v {项目目录}:/opt/www -p 9501:9501 hyperf/hyperf:8.0-alpine-v3.12-swoole
+```
+
+进入到docker环境执行 （如果composer下载不动 可以修改到阿里镜像源 Mac下建议本地开发）：
+```shell
+cd /opt/www
+composer update
+php bin/hyperf.php start
 ```
