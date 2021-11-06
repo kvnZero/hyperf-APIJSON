@@ -6,7 +6,7 @@
 # @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
 
 FROM hyperf/hyperf:8.0-alpine-v3.12-swoole
-LABEL maintainer="Hyperf Developers <group@hyperf.io>" version="1.0" license="MIT" app.name="Hyperf"
+LABEL maintainer="KvnZero <abigeater@163.com>" version="1.0" license="MIT" app.name="Hyperf-ApiJson"
 
 ##
 # ---------- env settings ----------

@@ -120,6 +120,12 @@ class MysqlQuery implements QueryInterface
         return $this;
     }
 
+    public function offset(int $value): self
+    {
+        $this->db->offset($value);
+        return $this;
+    }
+
     public function all(): array
     {
         return $this->db->get()->all();

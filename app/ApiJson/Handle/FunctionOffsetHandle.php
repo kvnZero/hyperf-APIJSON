@@ -2,15 +2,15 @@
 
 namespace App\ApiJson\Handle;
 
-class WhereHandle extends AbstractHandle
+class FunctionOffsetHandle extends AbstractHandle
 {
     protected function validateCondition(): bool
     {
-        return true;
+        return $this->key === '@offset';
     }
 
     protected function buildModel()
     {
-        $this->query->where($this->sanitizeKey, '=', $this->value);
+        $this->query->offset((int)$this->value);
     }
 }

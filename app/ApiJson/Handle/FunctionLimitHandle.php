@@ -2,15 +2,15 @@
 
 namespace App\ApiJson\Handle;
 
-class WhereHandle extends AbstractHandle
+class FunctionLimitHandle extends AbstractHandle
 {
     protected function validateCondition(): bool
     {
-        return true;
+        return $this->key === '@limit';
     }
 
     protected function buildModel()
     {
-        $this->query->where($this->sanitizeKey, '=', $this->value);
+        $this->query->limit((int)$this->value);
     }
 }

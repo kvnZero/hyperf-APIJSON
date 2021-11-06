@@ -32,6 +32,8 @@ interface QueryInterface
 
     public function limit(int $value): self;
 
+    public function offset(int $value): self;
+
     public function insertGetId(array $values, $sequence = null): int;
 
     public function update(array $values): bool;

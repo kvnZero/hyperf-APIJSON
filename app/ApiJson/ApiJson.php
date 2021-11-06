@@ -5,7 +5,6 @@ namespace App\ApiJson;
 use App\ApiJson\Parse\Parse;
 use App\Constants\ResponseCode;
 use Hyperf\HttpServer\Contract\RequestInterface;
-use Psr\Log\LogLevel;
 
 class ApiJson
 {
@@ -15,6 +14,12 @@ class ApiJson
 
     public function Query(): array
     {
+        if (!is_array(json_decode($this->request->getBody()->getContents(), true))) {
+            return [
+                'code' => ResponseCode::SERVER_ERROR,
+                'msg' => ResponseCode::getMessage(ResponseCode::SERVER_ERROR)
+            ];
+        }
         $parse = new Parse(json_decode($this->request->getBody()->getContents(), true), $this->method, $this->request->input('tag', ''));
         return array_merge([
             'code' => ResponseCode::SUCCESS,
