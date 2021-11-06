@@ -2,7 +2,6 @@
 
 namespace App\ApiJson\Method;
 
-use App\ApiJson\Interface\QueryInterface;
 use Hyperf\Utils\Arr;
 
 class PostMethod extends AbstractMethod
@@ -15,8 +14,12 @@ class PostMethod extends AbstractMethod
     protected function process()
     {
         $insertData = $this->tableEntity->getContent();
-        if (!$this->isQueryMany() || Arr::isAssoc($insertData)) {
+        $queryMany  = $this->isQueryMany();
+        if (!$queryMany && Arr::isAssoc($insertData)) {
             $insertData = [$insertData];
+        }
+        if (!$queryMany) {
+            $insertData = [$insertData[0]];
         }
         $insertIds = [];
         foreach ($insertData as $insertItem) {

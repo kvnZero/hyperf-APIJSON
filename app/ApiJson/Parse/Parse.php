@@ -39,6 +39,7 @@ class Parse
     {
         $result = [];
         foreach ($this->json as $tableName => $condition) { //可以优化成协程行为（如果没有依赖赋值的前提下）
+            $tableMany = false;
             if (in_array($tableName, $this->filterKey())) {
                 $this->tagColumn[$tableName] = $condition;
                 continue;
@@ -52,6 +53,13 @@ class Parse
                 $result[$tableName] = $parse->handle(true); //提供行为
                 continue; //跳出不往下执行
             }
+            if (str_ends_with($tableName, '[]')) {
+                $isQueryMany = true;
+                $tableMany = true;
+            }
+//            if (!preg_match("/^[A-Za-z]+$/", $tableName) || !is_array($condition)) {
+//                continue; //不满足表名规范 跳出不往下执行
+//            }
             $this->tableEntities[$tableName] = new TableEntity($tableName, $this->json, $this->getGlobalArgs(), $result);
             foreach ($this->supMethod as $methodClass) {
                 /** @var AbstractMethod $method */
@@ -59,7 +67,7 @@ class Parse
                 $method->setQueryMany($isQueryMany);
                 $response = $method->handle();
                 if (!is_null($response)) {
-                    if ($isQueryMany) {
+                    if ($isQueryMany && $tableMany == false) {
                         $result = $response;
                     } else {
                         $result[$tableName] = $response;
