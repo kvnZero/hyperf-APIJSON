@@ -16,6 +16,9 @@ abstract class AbstractMethod
     /** @var bool $isQueryMany */
     protected bool $isQueryMany = false;
 
+    /** @var bool $arrayQuery */
+    protected bool $arrayQuery = false;
+
     public function __construct(protected TableEntity $tableEntity, protected string $method = 'GET')
     {
         $this->buildQuery();
@@ -52,9 +55,14 @@ abstract class AbstractMethod
         $this->isQueryMany = $isQueryMany;
     }
 
+    public function setArrayQuery(bool $arrayQuery = false)
+    {
+        $this->arrayQuery = $arrayQuery;
+    }
+
     protected function isQueryMany(): bool
     {
-        return $this->isQueryMany;
+        return $this->isQueryMany; //可能有不止一个因素影响
     }
 
     abstract protected function validateCondition(): bool;

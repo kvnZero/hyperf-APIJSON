@@ -21,7 +21,7 @@ class GetMethod extends AbstractMethod
         $result = $this->query->all();
         if ($queryMany) {
             foreach ($result as $key => $item) {
-                $result[$key] = [$this->tableEntity->getTableName() => $item];
+                $result[$key] = $this->arrayQuery ? [$this->tableEntity->getTableName() => $item] : $item;
             }
         } else {
             $result = current($result);

@@ -64,6 +64,7 @@ class Parse
                 /** @var AbstractMethod $method */
                 $method = new $methodClass($this->tableEntities[$tableName], $this->method);
                 $method->setQueryMany($isQueryMany);
+                $method->setArrayQuery(false);
                 $response = $method->handle();
                 if (!is_null($response)) {
                     $result[$tableName] = $response;
@@ -74,7 +75,7 @@ class Parse
         return $this->resultExtendHandle($result);
     }
 
-    protected function resultExtendHandle(array $result)
+    protected function resultExtendHandle(array $result): array
     {
         if ($this->tagColumn['debug']) {
             $result['debug'] = (new Context())->get('querySql');
@@ -105,6 +106,7 @@ class Parse
                 $this->tableEntities['[]'][$tableName] = new TableEntity($tableName, $jsonData, $this->getGlobalArgs(), array_merge($result, $extendData));
                 $method = new GetMethod($this->tableEntities['[]'][$tableName], $this->method);
                 $method->setQueryMany($result == [[]]);
+                $method->setArrayQuery(true);
                 $response = $method->handle();
                 if (!is_null($response)) {
                     if ($result == [[]]) {
