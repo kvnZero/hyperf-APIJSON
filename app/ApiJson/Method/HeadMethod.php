@@ -2,6 +2,8 @@
 
 namespace App\ApiJson\Method;
 
+use App\ApiJson\Parse\Handle;
+
 class HeadMethod extends AbstractMethod
 {
     protected function validateCondition(): bool
@@ -11,8 +13,8 @@ class HeadMethod extends AbstractMethod
 
     protected function process()
     {
-        $conditionEntity = $this->tableEntity->getConditionEntity();
-        $conditionEntity->setQueryCondition($this->query);
+        $handle = new Handle($this->tableEntity->getConditionEntity(), $this->tableEntity);
+        $handle->build($this->query);
         return [
             'count' => $this->query->count()
         ];

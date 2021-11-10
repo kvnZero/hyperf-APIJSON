@@ -4,13 +4,19 @@ namespace App\ApiJson\Handle;
 
 class FunctionLimitHandle extends AbstractHandle
 {
-    protected function validateCondition(): bool
-    {
-        return $this->key === '@limit';
-    }
+    protected string $keyWord = '@limit';
 
     protected function buildModel()
     {
-        $this->query->limit((int)$this->value);
+        if (!in_array($this->keyWord, array_keys($this->condition->getCondition()))) {
+            return;
+        }
+        foreach (array_filter($this->condition->getCondition(), function($key){
+            return $key == $this->keyWord;
+        }, ARRAY_FILTER_USE_KEY) as $key => $value)
+        {
+            $this->query->limit((int)$value);
+            $this->unsetKey[] = $this->keyWord;
+        }
     }
 }

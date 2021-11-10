@@ -4,18 +4,20 @@ namespace App\ApiJson\Handle;
 
 class WhereRawHandle extends AbstractHandle
 {
-    protected function validateCondition(): bool
-    {
-        return str_ends_with($this->key, '{}') && !is_array($this->value);
-    }
-
     protected function buildModel()
     {
-        $conditionArr = explode(',', $this->value);
-        $sql = [];
-        foreach ($conditionArr as $condition) {
-            $sql[] = sprintf("`%s`%s", $this->sanitizeKey, trim($condition));
+        foreach (array_filter($this->condition->getCondition(), function($key){
+            return str_ends_with($key, '{}');
+        }, ARRAY_FILTER_USE_KEY) as $key => $value)
+        {
+            if (is_array($value)) continue;
+            $conditionArr = explode(',', (string)$value);
+            $sql = [];
+            foreach ($conditionArr as $condition) {
+                $sql[] = sprintf("`%s`%s", $this->sanitizeKey($key), trim($condition));
+            }
+            $this->query->whereRaw(join(' OR ', $sql));
+            $this->unsetKey[] = $key;
         }
-        $this->query->whereRaw(join(' OR ', $sql)); //3.2.3
     }
 }

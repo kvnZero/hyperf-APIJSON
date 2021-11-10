@@ -4,16 +4,22 @@ namespace App\ApiJson\Handle;
 
 class FunctionHavingHandle extends AbstractHandle
 {
-    protected function validateCondition(): bool
-    {
-        return $this->key === '@having';
-    }
+    protected string $keyWord = '@having';
 
-    protected function buildModel()
+    public function buildModel()
     {
-        $havingArr = explode(';', $this->value);
-        foreach ($havingArr as $having) {
-            $this->query->having($having);
+        if (!in_array($this->keyWord, array_keys($this->condition->getCondition()))) {
+            return;
+        }
+        foreach (array_filter($this->condition->getCondition(), function($key){
+            return $key == $this->keyWord;
+        }, ARRAY_FILTER_USE_KEY) as $key => $value)
+        {
+            $havingArr = explode(';', $value);
+            foreach ($havingArr as $having) {
+                $this->query->having($having);
+            }
+            $this->unsetKey[] = $this->keyWord;
         }
     }
 }
