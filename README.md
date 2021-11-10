@@ -37,7 +37,7 @@ https://github.com/Tencent/APIJSON/commits/master
 
 1. ✅最基本CRUD 包括批量写入 批量更新 批量删除
 2. ✅支持@column @having @order @group
-3. ✅支持运算符 {}, <>, }{@, $, %, ~
+3. ✅支持运算符 {}, }{@, $, %, ~
 4. ✅支持多表查询、一对一查询、一对多查询、数组内多对多查询
 5. ✅支持数组内count/page
 6. ✅支持debug标签可返回语句执行
