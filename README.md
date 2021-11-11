@@ -17,7 +17,7 @@
 
 ---
 
-APIJSON 是一种专为 API 而生的 JSON 网络传输协议 以及 基于这套协议实现的 ORM 库。<br />
+腾讯 APIJSON 是一种专为 API 而生的 JSON 网络传输协议 以及 基于这套协议实现的 ORM 库。<br />
 为各种增删改查提供了完全自动化的万能 API，零代码实时满足千变万化的各种新增和变更需求。<br />
 能大幅降低开发和沟通成本，简化开发流程，缩短开发周期。<br />
 适合中小型前后端分离的项目，尤其是 初创项目、内部项目、低代码/零代码、小程序、BaaS、Serverless 等。<br />
@@ -30,7 +30,7 @@ APIJSON 是一种专为 API 而生的 JSON 网络传输协议 以及 基于这�
 
 ### 官方仓库
 
-https://github.com/Tencent/APIJSON/commits/master
+https://github.com/Tencent/APIJSON
 
 
 ### 开发进度
@@ -47,7 +47,8 @@ https://github.com/Tencent/APIJSON/commits/master
 
 ### 如何使用 
 
-Postman文档（调试过程中保存）：https://documenter.getpostman.com/view/7711046/UVC3jStM
+Postman文档（调试过程中保存）：https://documenter.getpostman.com/view/7711046/UVC3jStM <br />
+APIJSON通用文档（增删改查说明）：https://github.com/Tencent/APIJSON/blob/master/Document.md
 
 拉取该项目, 配置mysql数据库, 配置文件路径：`config\autoload\databases.php`
 
