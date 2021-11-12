@@ -12,10 +12,12 @@ class WhereRegexpHandle extends AbstractHandle
         {
             $value = !is_array($value) ? [$value] : $value;
             $sql = [];
+            $bind = [];
             foreach ($value as $item) {
-                $sql[] = sprintf("%s REGEXP %s", $this->sanitizeKey($key), trim($item));
+                $sql[] = sprintf("`%s` REGEXP ?", $this->sanitizeKey($key));
+                $bind = array_merge($bind, [trim($item)]);
             }
-            $this->query->whereRaw(join(' OR ', $sql));
+            $this->condition->addQueryWhere($key, join(' OR ', $sql), $bind);
             $this->unsetKey[] = $key;
         }
     }

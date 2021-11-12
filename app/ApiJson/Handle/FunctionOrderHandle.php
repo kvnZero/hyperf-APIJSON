@@ -16,9 +16,11 @@ class FunctionOrderHandle extends AbstractHandle
         }, ARRAY_FILTER_USE_KEY) as $key => $value)
         {
             $orderArr = explode(',', $value);
+            $orderCondition = [];
             foreach ($orderArr as $order) {
-                $this->query->orderBy(str_replace(['-', '+'], '', $order), str_ends_with($order, '-') ? 'desc' : 'asc');
+                $orderCondition[] = [str_replace(['-', '+'], '', $order), str_ends_with($order, '-') ? 'desc' : 'asc'];
             }
+            $this->condition->setOrder($orderCondition);
             $this->unsetKey[] = $this->keyWord;
         }
     }

@@ -11,7 +11,8 @@ class WhereInHandle extends AbstractHandle
         }, ARRAY_FILTER_USE_KEY) as $key => $value)
         {
             if (!is_array($value)) continue;
-            $this->query->whereIn($this->sanitizeKey($key), $value);
+            $sql = sprintf('`%s` in (?)', $this->sanitizeKey($key));
+            $this->condition->addQueryWhere($key, $sql, [join(',', $value)]);
             $this->unsetKey[] = $key;
         }
     }

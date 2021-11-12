@@ -71,7 +71,7 @@ class Handle
     {
     }
 
-    public function build(QueryInterface $query)
+    public function build()
     {
         foreach ($this->replaceRules as $replaceRuleClass) {
             /** @var AbstractReplace $replaceRule */
@@ -80,7 +80,7 @@ class Handle
         }
         foreach ($this->methodRules as $methodRuleClass) {
             /** @var AbstractHandle $methodRule */
-            $methodRule = new $methodRuleClass($query, $this->conditionEntity);
+            $methodRule = new $methodRuleClass($this->conditionEntity);
             $methodRule->handle();
         }
     }

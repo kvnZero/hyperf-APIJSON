@@ -14,7 +14,7 @@ class HeadMethod extends AbstractMethod
     protected function process()
     {
         $handle = new Handle($this->tableEntity->getConditionEntity(), $this->tableEntity);
-        $handle->build($this->query);
+        $handle->build();
         return [
             'count' => $this->query->count()
         ];

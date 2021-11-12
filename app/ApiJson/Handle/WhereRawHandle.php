@@ -16,7 +16,7 @@ class WhereRawHandle extends AbstractHandle
             foreach ($conditionArr as $condition) {
                 $sql[] = sprintf("`%s`%s", $this->sanitizeKey($key), trim($condition));
             }
-            $this->query->whereRaw(join(' OR ', $sql));
+            $this->condition->addQueryWhere($key, join(' OR ', $sql), []);
             $this->unsetKey[] = $key;
         }
     }

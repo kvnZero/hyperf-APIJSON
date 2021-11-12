@@ -16,10 +16,12 @@ class FunctionHavingHandle extends AbstractHandle
         }, ARRAY_FILTER_USE_KEY) as $key => $value)
         {
             $havingArr = explode(';', $value);
+            $sql = [];
             foreach ($havingArr as $having) {
-                $this->query->having($having);
+                $sql[] = sprintf("`%s`%s", $this->sanitizeKey($key), trim($having));
             }
-            $this->unsetKey[] = $this->keyWord;
+            $this->condition->setHaving($sql); //解析时为AND
+            $this->unsetKey[] = $key;
         }
     }
 }

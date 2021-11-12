@@ -7,15 +7,12 @@ use App\ApiJson\Interface\QueryInterface;
 
 abstract class AbstractHandle
 {
-    /** @var string 清洗后的查询key */
-    protected string $sanitizeKey;
-
     /** @var string 关键字 */
     protected string $keyWord;
 
     protected array $unsetKey = [];
 
-    public function __construct(protected QueryInterface $query, protected ConditionEntity $condition)
+    public function __construct(protected ConditionEntity $condition)
     {
     }
 

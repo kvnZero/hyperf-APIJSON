@@ -8,7 +8,8 @@ class WhereHandle extends AbstractHandle
     {
         foreach ($this->condition->getCondition() as $key => $value)
         {
-            $this->query->where($this->sanitizeKey($key), '=', $value);
+            $sql = sprintf("`%s` = ?", $this->sanitizeKey($key));
+            $this->condition->addQueryWhere($key, $sql, [$value]);
             $this->unsetKey[] = $key;
         }
     }

@@ -16,7 +16,7 @@ class FunctionGroupHandle extends AbstractHandle
         }, ARRAY_FILTER_USE_KEY) as $key => $value)
         {
             $groupArr = explode(',', $value);
-            $this->query->groupBy($groupArr);
+            $this->condition->setGroup($groupArr);
             $this->unsetKey[] = $this->keyWord;
         }
     }

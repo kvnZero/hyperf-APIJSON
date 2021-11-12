@@ -15,7 +15,7 @@ class FunctionLimitHandle extends AbstractHandle
             return $key == $this->keyWord;
         }, ARRAY_FILTER_USE_KEY) as $key => $value)
         {
-            $this->query->limit((int)$value);
+            $this->condition->setLimit((int)$value);
             $this->unsetKey[] = $this->keyWord;
         }
     }

@@ -12,11 +12,13 @@ class WhereBetweenHandle extends AbstractHandle
         {
             $value = !is_array($value) ? [$value] : $value;
             $sql = [];
+            $bind = [];
             foreach ($value as $item) {
                 $itemArr = explode(',', $item);
-                $sql[] = sprintf("%s BETWEEN %s AND %s", $this->sanitizeKey($key), trim($itemArr[0]), trim($itemArr[1]));
+                $sql[] = sprintf("`%s` BETWEEN ? AND ?", $this->sanitizeKey($key));
+                $bind = array_merge($bind, [trim($itemArr[0]), trim($itemArr[1])]);
             }
-            $this->query->whereRaw(join(' OR ', $sql)); //3.2.3
+            $this->condition->addQueryWhere($key, join(' OR ', $sql), $bind);
             $this->unsetKey[] = $key;
         }
     }

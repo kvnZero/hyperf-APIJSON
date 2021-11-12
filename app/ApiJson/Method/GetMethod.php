@@ -14,11 +14,11 @@ class GetMethod extends AbstractMethod
     protected function process()
     {
         $handle = new Handle($this->tableEntity->getConditionEntity(), $this->tableEntity);
-        $handle->build($this->query);
+        $handle->build();
 
         $queryMany = $this->isQueryMany();
         if (!$queryMany) {
-            $this->query->limit(1);
+            $this->tableEntity->getConditionEntity()->setLimit(1);
         }
         $result = $this->query->all();
         if ($queryMany) {

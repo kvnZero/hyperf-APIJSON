@@ -2,8 +2,8 @@
 
 namespace App\ApiJson\Model;
 
+use App\ApiJson\Entity\ConditionEntity;
 use App\ApiJson\Interface\QueryInterface;
-use Closure;
 use Hyperf\Database\Query\Builder;
 use Hyperf\DbConnection\Db;
 
@@ -15,7 +15,7 @@ class MysqlQuery implements QueryInterface
     /** @var Builder $db */
     protected Builder $db;
 
-    public function __construct(protected string $tableName)
+    public function __construct(protected string $tableName, protected ConditionEntity $conditionEntity)
     {
         $this->db = Db::table($tableName);
     }
@@ -46,50 +46,9 @@ class MysqlQuery implements QueryInterface
         return $this->db->get()->all();
     }
 
-    public function where(string $column, $operator = null, $value = null, string $boolean = 'and'): self
-    {
-        $this->db->where($column, $operator, $value, $boolean);
-        return $this;
-    }
-
-    public function whereIn(string $column, array $values, string $boolean = 'and', $not = false): self
-    {
-        $this->db->whereIn($column, $values, $boolean, $not);
-        return $this;
-    }
-
-    public function whereRaw(string $sql, array $bindings = [], string $boolean = 'and'): self
-    {
-        $this->db->whereRaw($sql, $bindings, $boolean);
-        return $this;
-    }
-
-    public function whereExists(Closure $callback, string $boolean = 'and', $not = false): self
-    {
-        $this->db->whereExists($callback, $boolean, $not);
-        return $this;
-    }
-
-    public function orderBy($column, $direction = 'asc'): self
-    {
-        $this->db->orderBy($column, $direction);
-        return $this;
-    }
-
-    public function groupBy(...$groups): self
-    {
-        $this->db->groupBy(...$groups);
-        return $this;
-    }
-
-    public function select($columns = ['*']): self
-    {
-        $this->db->select($columns);
-        return $this;
-    }
-
     public function count($columns = '*'): int
     {
+        $this->buildQuery();
         return $this->db->count();
     }
 
@@ -100,6 +59,8 @@ class MysqlQuery implements QueryInterface
 
     public function update(array $values): bool
     {
+        $this->buildQuery(false);
+        if (empty($this->db->getBindings()['where'])) return false; // 不允许空条件修改
         return $this->db->update($values);
     }
 
@@ -108,26 +69,44 @@ class MysqlQuery implements QueryInterface
         return $this->db->delete($id);
     }
 
-    public function having($column, $operator = null, $value = null, $boolean = 'and'): self
-    {
-       $this->db->having($column, $operator, $value, $boolean);
-       return $this;
-    }
-
-    public function limit(int $value): self
-    {
-        $this->db->limit($value);
-        return $this;
-    }
-
-    public function offset(int $value): self
-    {
-        $this->db->offset($value);
-        return $this;
-    }
-
     public function all(): array
     {
+        $this->buildQuery();
         return $this->db->get()->all();
+    }
+
+    protected function buildQuery(bool $query = true)
+    {
+        $queryWhere = $this->conditionEntity->getQueryWhere();
+        foreach ($queryWhere as $itemWhere) {
+            $this->db->whereRaw($itemWhere['sql'], $itemWhere['bind']);
+        }
+        if (!$query) return; //下面不再非查询操作
+
+        $this->db->select($this->conditionEntity->getColumn());
+        $limit = $this->conditionEntity->getLimit();
+        if ($limit > 0) {
+            $this->db->limit($limit);
+        }
+        $offset = $this->conditionEntity->getOffset();
+        if ($offset > 0) {
+            $this->db->offset($offset);
+        }
+        $group = $this->conditionEntity->getGroup();
+        if (!empty($group)) {
+            $this->db->groupBy(...$group);
+        }
+        $orderArr = $this->conditionEntity->getOrder();
+        if (!empty($orderArr)) {
+            foreach ($orderArr as $orderItem) {
+                $this->db->orderBy($orderItem[0], $orderItem[1]);
+            }
+        }
+        $havingArr = $this->conditionEntity->getHaving();
+        if (!empty($havingArr)) {
+            foreach ($havingArr as $havingItem) {
+                $this->db->having($havingItem);
+            }
+        }
     }
 }

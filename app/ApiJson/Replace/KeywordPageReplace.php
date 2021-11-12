@@ -9,14 +9,14 @@ class KeywordPageReplace extends AbstractReplace
         $condition = $this->condition->getCondition();
         if (isset($condition['page'])) {
             $count = 10;
-            if (!empty($this->condition['count'])) {
-                $count = (int) $this->condition['count'];
-            } else if (!empty($this->condition['limit'])) {
-                $count = (int) $this->condition['limit'];
-            } else if (!empty($this->condition['@limit'])) {
-                $count = (int) $this->condition['@limit'];
-            } else if (!empty($this->condition['@count'])) {
-                $count = (int) $this->condition['@count'];
+            if (!empty($condition['count'])) {
+                $count = (int) $condition['count'];
+            } else if (!empty($condition['limit'])) {
+                $count = (int) $condition['limit'];
+            } else if (!empty($condition['@limit'])) {
+                $count = (int) $condition['@limit'];
+            } else if (!empty($condition['@count'])) {
+                $count = (int) $condition['@count'];
             }
 
             $condition['@offset'] = ((int)$condition['page'] - 1) * $count;

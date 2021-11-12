@@ -15,7 +15,7 @@ class FunctionOffsetHandle extends AbstractHandle
             return $key == $this->keyWord;
         }, ARRAY_FILTER_USE_KEY) as $key => $value)
         {
-            $this->query->offset((int)$value);
+            $this->condition->setOffset((int)$value);
             $this->unsetKey[] = $this->keyWord;
         }
     }

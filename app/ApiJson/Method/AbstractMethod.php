@@ -32,7 +32,7 @@ abstract class AbstractMethod
 
     protected function buildQuery()
     {
-        $this->query = new (ApplicationContext::getContainer()->get(ConfigInterface::class)->get(QueryInterface::class))($this->tableEntity->getRealTableName());
+        $this->query = new (ApplicationContext::getContainer()->get(ConfigInterface::class)->get(QueryInterface::class))($this->tableEntity->getRealTableName(), $this->tableEntity->getConditionEntity());
     }
 
     protected function parseManyResponse(array $ids, bool $isQueryMany = false): array
