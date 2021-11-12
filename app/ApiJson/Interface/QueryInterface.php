@@ -22,6 +22,10 @@ interface QueryInterface
 
     public function all();
 
+    public function toSql();
+
+    public function getBindings();
+
     public function getDb();
 
     public function query();

@@ -14,6 +14,7 @@ use App\ApiJson\Entity\ConditionEntity;
 use App\ApiJson\Entity\TableEntity;
 use App\ApiJson\Handle\AbstractHandle;
 use App\ApiJson\Handle\FunctionColumnHandle;
+use App\ApiJson\Handle\FunctionCombineHandle;
 use App\ApiJson\Handle\FunctionGroupHandle;
 use App\ApiJson\Handle\FunctionHavingHandle;
 use App\ApiJson\Handle\FunctionLimitHandle;
@@ -25,9 +26,11 @@ use App\ApiJson\Handle\WhereHandle;
 use App\ApiJson\Handle\WhereInHandle;
 use App\ApiJson\Handle\WhereJsonContainsHandle;
 use App\ApiJson\Handle\WhereLikeHandle;
+use App\ApiJson\Handle\WhereNotInHandle;
+use App\ApiJson\Handle\WhereOpHandle;
 use App\ApiJson\Handle\WhereRawHandle;
 use App\ApiJson\Handle\WhereRegexpHandle;
-use App\ApiJson\Interface\QueryInterface;
+use App\ApiJson\Handle\WhereSubQueryHandle;
 use App\ApiJson\Replace\AbstractReplace;
 use App\ApiJson\Replace\KeywordCountReplace;
 use App\ApiJson\Replace\KeywordPageReplace;
@@ -61,10 +64,14 @@ class Handle
         WhereBetweenHandle::class,
         WhereExistsHandle::class,
         WhereRegexpHandle::class,
+        WhereNotInHandle::class,
         WhereLikeHandle::class,
         WhereRawHandle::class,
         WhereInHandle::class,
+        WhereSubQueryHandle::class,
+        WhereOpHandle::class,
         WhereHandle::class,
+        FunctionCombineHandle::class
     ];
 
     public function __construct(protected ConditionEntity $conditionEntity, protected TableEntity $tableEntity)
