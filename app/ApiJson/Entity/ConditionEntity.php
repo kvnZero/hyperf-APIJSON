@@ -2,61 +2,21 @@
 
 namespace App\ApiJson\Entity;
 
-use App\ApiJson\Handle\FunctionLimitHandle;
-use App\ApiJson\Handle\FunctionOffsetHandle;
-use App\ApiJson\Interface\QueryInterface;
-use App\ApiJson\Handle\AbstractHandle;
-use App\ApiJson\Handle\FunctionColumnHandle;
-use App\ApiJson\Handle\FunctionGroupHandle;
-use App\ApiJson\Handle\FunctionHavingHandle;
-use App\ApiJson\Handle\FunctionOrderHandle;
-use App\ApiJson\Handle\WhereBetweenHandle;
-use App\ApiJson\Handle\WhereExistsHandle;
-use App\ApiJson\Handle\WhereHandle;
-use App\ApiJson\Handle\WhereInHandle;
-use App\ApiJson\Handle\WhereJsonContainsHandle;
-use App\ApiJson\Handle\WhereLikeHandle;
-use App\ApiJson\Handle\WhereRawHandle;
-use App\ApiJson\Handle\WhereRegexpHandle;
-use App\ApiJson\Method\AbstractMethod;
-use App\ApiJson\Replace\AbstractReplace;
-use App\ApiJson\Replace\KeywordCountReplace;
-use App\ApiJson\Replace\KeywordPageReplace;
-use App\ApiJson\Replace\QuoteReplace;
-
 class ConditionEntity
 {
-    /**
-     * 替换规则
-     * @var AbstractReplace[]
-     */
-    protected array $replaceRules = [
-        KeywordCountReplace::class,
-        KeywordPageReplace::class,
-        QuoteReplace::class,
-    ];
-
+    protected array $changeLog = [];
 
     /**
-     * 匹配规则 根据从上自下优先先匹先出
-     * @var AbstractHandle[]
+     * @var array
      */
-    protected array $methodRules = [
-        FunctionColumnHandle::class,
-        FunctionHavingHandle::class,
-        FunctionOffsetHandle::class,
-        FunctionLimitHandle::class,
-        FunctionGroupHandle::class,
-        FunctionOrderHandle::class,
-        WhereJsonContainsHandle::class,
-        WhereBetweenHandle::class,
-        WhereExistsHandle::class,
-        WhereRegexpHandle::class,
-        WhereLikeHandle::class,
-        WhereRawHandle::class,
-        WhereInHandle::class,
-        WhereHandle::class,
-    ];
+    protected array $where = [];
+
+    protected int $limit = 0;
+    protected int $offset = 0;
+    protected array $column = ['*'];
+    protected array $group = [];
+    protected array $order = [];
+    protected array $having = [];
 
     /**
      * @param array $condition 条件
@@ -65,29 +25,141 @@ class ConditionEntity
     {
     }
 
-    protected function replaceHandle($key, $value, array $condition = []): array
+    public function getExtendData(): array
     {
-        foreach ($this->replaceRules as $rule) {
-            /** @var AbstractReplace $replaceRule */
-            $replaceRule = new $rule($key, $value, $condition, $this->extendData);
-            $response = $replaceRule->handle();
-            if (!is_null($response)) return $response;
-        }
-        return [$key, $value];
+        return $this->extendData;
+    }
+
+    public function setCondition(array $condition)
+    {
+        $this->log($condition);
+        $this->condition = $condition;
+    }
+
+    public function getCondition(): array
+    {
+        return $this->condition;
+    }
+
+    public function getQueryWhere(): array
+    {
+        return $this->where;
+    }
+
+    public function setQueryWhere(array $where)
+    {
+        $this->where = $where;
+    }
+
+    public function addQueryWhere(string $key, string $sql, array $bindArgs = [])
+    {
+        $this->where[$key] = [
+            'sql' => $sql,
+            'bind' => $bindArgs
+        ];
     }
 
     /**
-     * 整理语句
+     * @param array|string[] $column
      */
-    public function setQueryCondition(QueryInterface $query)
+    public function setColumn(array $column): void
     {
-        foreach ($this->condition as $key => $value) {
-            [$key, $value] = $this->replaceHandle($key, $value, $this->condition); //解决引用问题
-            /** @var AbstractMethod $rule */
-            foreach ($this->methodRules as $rule) {
-                $methodRule = new $rule($query, $key, $value);
-                if ($methodRule->handle()) break;
-            }
-        }
+        $this->column = $column;
+    }
+
+    /**
+     * @param array $group
+     */
+    public function setGroup(array $group): void
+    {
+        $this->group = $group;
+    }
+
+    /**
+     * @param array $having
+     */
+    public function setHaving(array $having): void
+    {
+        $this->having = $having;
+    }
+
+    /**
+     * @param int $limit
+     */
+    public function setLimit(int $limit): void
+    {
+        $this->limit = $limit;
+    }
+
+    /**
+     * @param int $offset
+     */
+    public function setOffset(int $offset): void
+    {
+        $this->offset = $offset;
+    }
+
+    /**
+     * @param array $order
+     */
+    public function setOrder(array $order): void
+    {
+        $this->order = $order;
+    }
+
+    /**
+     * @return array
+     */
+    public function getColumn(): array
+    {
+        return $this->column;
+    }
+
+    /**
+     * @return array
+     */
+    public function getGroup(): array
+    {
+        return $this->group;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHaving(): array
+    {
+        return $this->having;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLimit(): int
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOffset(): int
+    {
+        return $this->offset;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOrder(): array
+    {
+        return $this->order;
+    }
+
+    protected function log(array $condition)
+    {
+        $this->changeLog[] = [
+            'old' => $this->condition,
+            'new' => $condition
+        ];
     }
 }

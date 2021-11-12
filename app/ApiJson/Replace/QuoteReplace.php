@@ -4,18 +4,19 @@ namespace App\ApiJson\Replace;
 
 class QuoteReplace extends AbstractReplace
 {
-    protected function validateCondition(): bool
-    {
-        return str_ends_with($this->key, '@') && !str_ends_with($this->key, '}{@');
-    }
-
     protected function process()
     {
-        $path = str_replace(['/', '[]'], ['.', 'currentItem'], $this->value);
+        $condition = $this->condition->getCondition();
 
-        $this->value = data_get($this->extendData, $path);
-        $this->key = substr($this->key, 0, strlen($this->key) - 1);
-
-        return [$this->key, $this->value]; //必须
+        foreach (array_filter($condition, function($key){
+            return str_ends_with($key, '@') && !str_ends_with($key, '}{@');
+        }, ARRAY_FILTER_USE_KEY) as $key => $value)
+        {
+            $path = str_replace(['/', '[]'], ['.', 'currentItem'], $value);
+            $newKey = substr($key, 0, strlen($key) - 1);
+            $condition[$newKey] = data_get($this->condition->getExtendData(), $path);
+            unset($condition[$key]);
+            $this->condition->setCondition($condition);
+        }
     }
 }

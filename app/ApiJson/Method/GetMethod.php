@@ -2,6 +2,8 @@
 
 namespace App\ApiJson\Method;
 
+use App\ApiJson\Parse\Handle;
+
 class GetMethod extends AbstractMethod
 {
     protected function validateCondition(): bool
@@ -11,12 +13,12 @@ class GetMethod extends AbstractMethod
 
     protected function process()
     {
-        $conditionEntity = $this->tableEntity->getConditionEntity();
-        $conditionEntity->setQueryCondition($this->query);
+        $handle = new Handle($this->tableEntity->getConditionEntity(), $this->tableEntity);
+        $handle->build();
 
         $queryMany = $this->isQueryMany();
         if (!$queryMany) {
-            $this->query->limit(1);
+            $this->tableEntity->getConditionEntity()->setLimit(1);
         }
         $result = $this->query->all();
         if ($queryMany) {

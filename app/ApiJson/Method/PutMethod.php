@@ -36,7 +36,9 @@ class PutMethod extends AbstractMethod
 
             foreach ($ids as $id) {
                 $this->buildQuery();
-                $this->query->where($this->query->getPrimaryKey(), '=', $id)->update($updateItem) && $updateIds[] = $id;
+                $querySql = sprintf('`%s` = ?', $this->query->getPrimaryKey());
+                $this->tableEntity->getConditionEntity()->addQueryWhere('id', $querySql, [$id]);
+                $this->query->update($updateItem) && $updateIds[] = $id;
             }
         }
         return $this->parseManyResponse($updateIds, $queryMany);

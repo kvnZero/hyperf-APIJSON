@@ -2,27 +2,41 @@
 
 namespace App\ApiJson\Handle;
 
+use App\ApiJson\Entity\ConditionEntity;
 use App\ApiJson\Interface\QueryInterface;
 
 abstract class AbstractHandle
 {
-    /** @var string 清洗后的查询key */
-    protected string $sanitizeKey;
+    /** @var string 关键字 */
+    protected string $keyWord;
 
-    public function __construct(protected QueryInterface $query, protected string $key, protected $value)
+    protected array $unsetKey = [];
+
+    public function __construct(protected ConditionEntity $condition)
     {
-        preg_match('#(?<key>[a-zA-z0-9_]+)#', $this->key, $match);
-        $this->sanitizeKey = $match['key'] ?? $this->key;
     }
 
-    public function handle(): bool
+    protected function sanitizeKey(string $key): string
     {
-        if (!$this->validateCondition()) return false;
+        preg_match('#(?<key>[a-zA-z0-9_]+)#', $key, $match);
+        return $match['key'] ?? $key;
+    }
+
+    public function handle()
+    {
         $this->buildModel();
-        return true;
+        $this->unsetKeySaveCondition();
     }
 
-    abstract protected function validateCondition(): bool;
+    protected function unsetKeySaveCondition()
+    {
+        if (empty($this->unsetKey)) return;
+        $condition = $this->condition->getCondition();
+        foreach ($this->unsetKey as $key) {
+            unset($condition[$key]);
+        }
+        $this->condition->setCondition($condition);
+    }
 
     abstract protected function buildModel();
 }

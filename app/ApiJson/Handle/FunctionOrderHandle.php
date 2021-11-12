@@ -4,16 +4,24 @@ namespace App\ApiJson\Handle;
 
 class FunctionOrderHandle extends AbstractHandle
 {
-    protected function validateCondition(): bool
-    {
-        return $this->key === '@order';
-    }
+    protected string $keyWord = '@order';
 
-    protected function buildModel()
+    public function buildModel()
     {
-        $orderArr = explode(',', $this->value);
-        foreach ($orderArr as $order) {
-            $this->query->orderBy(str_replace(['-', '+'], '', $order), str_ends_with($order, '-') ? 'desc' : 'asc');
+        if (!in_array($this->keyWord, array_keys($this->condition->getCondition()))) {
+            return;
+        }
+        foreach (array_filter($this->condition->getCondition(), function($key){
+            return $key == $this->keyWord;
+        }, ARRAY_FILTER_USE_KEY) as $key => $value)
+        {
+            $orderArr = explode(',', $value);
+            $orderCondition = [];
+            foreach ($orderArr as $order) {
+                $orderCondition[] = [str_replace(['-', '+'], '', $order), str_ends_with($order, '-') ? 'desc' : 'asc'];
+            }
+            $this->condition->setOrder($orderCondition);
+            $this->unsetKey[] = $this->keyWord;
         }
     }
 }

@@ -2,37 +2,17 @@
 
 namespace App\ApiJson\Interface;
 
-use Closure;
+use App\ApiJson\Entity\ConditionEntity;
 
 interface QueryInterface
 {
-    public function __construct(string $tableName);
+    public function __construct(string $tableName, ConditionEntity $conditionEntity);
 
     public function setPrimaryKey(string $primaryKey): void;
 
     public function getPrimaryKey(): string;
 
-    public function where(string $column, $operator = null, $value = null, string $boolean = 'and'): self;
-
-    public function whereIn(string $column, array $values, string $boolean = 'and', $not = false): self;
-
-    public function whereRaw(string $sql, array $bindings = [], string $boolean = 'and'): self;
-
-    public function whereExists(Closure $callback, string $boolean = 'and', $not = false): self;
-
-    public function orderBy($column, $direction = 'asc'): self;
-
-    public function groupBy(...$groups): self;
-
-    public function select($columns = ['*']): self;
-
-    public function having($column, $operator = null, $value = null, $boolean = 'and'): self;
-
     public function count($columns = '*'): int;
-
-    public function limit(int $value): self;
-
-    public function offset(int $value): self;
 
     public function insertGetId(array $values, $sequence = null): int;
 

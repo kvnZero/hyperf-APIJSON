@@ -17,7 +17,7 @@ class TableEntity
      * @param string $tableName 表名
      * @param array $jsonContent json源数据
      */
-    public function __construct(protected string $tableName, protected array $jsonContent, protected array $globalArgs, protected array $extendData = [])
+    public function __construct(protected string $tableName, protected array $jsonContent, protected array $globalArgs = [], protected array $extendData = [])
     {
         $sanitizeTableName = str_replace(['[]'], '', $this->tableName);
         $this->realTableName = $sanitizeTableName;

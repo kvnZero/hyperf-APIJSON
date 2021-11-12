@@ -4,14 +4,20 @@ namespace App\ApiJson\Handle;
 
 class FunctionGroupHandle extends AbstractHandle
 {
-    protected function validateCondition(): bool
-    {
-        return $this->key === '@group';
-    }
+    protected string $keyWord = '@group';
 
-    protected function buildModel()
+    public function buildModel()
     {
-        $groupArr = explode(',', $this->value);
-        $this->query->groupBy($groupArr);
+        if (!in_array($this->keyWord, array_keys($this->condition->getCondition()))) {
+            return;
+        }
+        foreach (array_filter($this->condition->getCondition(), function($key){
+            return $key == $this->keyWord;
+        }, ARRAY_FILTER_USE_KEY) as $key => $value)
+        {
+            $groupArr = explode(',', $value);
+            $this->condition->setGroup($groupArr);
+            $this->unsetKey[] = $this->keyWord;
+        }
     }
 }
