@@ -45,7 +45,7 @@ abstract class AbstractHandle
     protected function subTableQuery(array $data): QueryInterface
     {
         $tableName = $data['from'];
-        $tableEntity = new TableEntity($tableName, $data[$data['from']]);
+        $tableEntity = new TableEntity($tableName, $data);
         $handle = new Handle($tableEntity->getConditionEntity(), $tableEntity);
         $handle->build();
         /** @var QueryInterface $query */
