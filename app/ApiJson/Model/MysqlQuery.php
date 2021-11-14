@@ -75,6 +75,17 @@ class MysqlQuery implements QueryInterface
         return $this->db->get()->all();
     }
 
+    public function toSql(): string
+    {
+        $this->buildQuery();
+        return $this->db->toSql();
+    }
+
+    public function getBindings(): array
+    {
+        return $this->db->getBindings();
+    }
+
     protected function buildQuery(bool $query = true)
     {
         $queryWhere = $this->conditionEntity->getQueryWhere();
