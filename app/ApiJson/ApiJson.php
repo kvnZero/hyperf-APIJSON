@@ -16,14 +16,14 @@ class ApiJson
     {
         if (!is_array(json_decode($this->request->getBody()->getContents(), true))) {
             return [
-                'code' => ResponseCode::SERVER_ERROR,
-                'msg' => ResponseCode::getMessage(ResponseCode::SERVER_ERROR)
+                'code' => ResponseCode::CODE_UNSUPPORTED_ENCODING,
+                'msg' => ResponseCode::getMessage(ResponseCode::CODE_UNSUPPORTED_ENCODING)
             ];
         }
         $parse = new Parse(json_decode($this->request->getBody()->getContents(), true), $this->method, $this->request->input('tag', ''));
         return array_merge([
-            'code' => ResponseCode::SUCCESS,
-            'msg' => ResponseCode::getMessage(ResponseCode::SUCCESS)
+            'code' => ResponseCode::CODE_SUCCESS,
+            'msg' => ResponseCode::getMessage(ResponseCode::CODE_SUCCESS)
         ], $parse->handle());
     }
 }
