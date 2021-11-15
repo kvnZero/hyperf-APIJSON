@@ -5,9 +5,12 @@ namespace App\ApiJson\Handle;
 use App\ApiJson\Entity\ConditionEntity;
 use App\ApiJson\Entity\TableEntity;
 use App\ApiJson\Interface\QueryInterface;
+use App\Event\ApiJson\QueryHandleAfter;
+use App\Event\ApiJson\QueryHandleBefore;
+use Hyperf\Utils\ApplicationContext;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use App\ApiJson\Parse\Handle;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Utils\ApplicationContext;
 
 abstract class AbstractHandle
 {
@@ -28,8 +31,10 @@ abstract class AbstractHandle
 
     public function handle()
     {
+        $this->handleBefore();
         $this->buildModel();
         $this->unsetKeySaveCondition();
+        $this->handleAfter();
     }
 
     protected function unsetKeySaveCondition()
@@ -40,6 +45,20 @@ abstract class AbstractHandle
             unset($condition[$key]);
         }
         $this->condition->setCondition($condition);
+    }
+
+    protected function handleBefore()
+    {
+        $event = new QueryHandleBefore($this->condition);
+        ApplicationContext::getContainer()->get(EventDispatcherInterface::class)->dispatch($event);
+        $this->condition = $event->condition;
+    }
+
+    protected function handleAfter()
+    {
+        $event = new QueryHandleAfter($this->condition);
+        ApplicationContext::getContainer()->get(EventDispatcherInterface::class)->dispatch($event);
+        $this->condition = $event->condition;
     }
 
     protected function subTableQuery(array $data): QueryInterface
