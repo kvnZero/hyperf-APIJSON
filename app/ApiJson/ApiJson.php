@@ -25,8 +25,8 @@ class ApiJson
         if (empty($beforeEvent->response)) { //提供更多可能性, 如接入缓存功能
             if (!is_array(json_decode($beforeEvent->content, true))) {
                 return [
-                    'code' => ResponseCode::SERVER_ERROR,
-                    'msg' => ResponseCode::getMessage(ResponseCode::SERVER_ERROR)
+                    'code' => ResponseCode::CODE_UNSUPPORTED_ENCODING,
+                    'msg' => ResponseCode::getMessage(ResponseCode::CODE_UNSUPPORTED_ENCODING)
                 ];
             }
             $parse = new Parse(json_decode($beforeEvent->content, true), $this->method, $this->request->input('tag', ''));
@@ -38,8 +38,8 @@ class ApiJson
         ApplicationContext::getContainer()->get(EventDispatcherInterface::class)->dispatch(new RequestHandleAfter($beforeEvent->content, $response));
 
         return array_merge([
-            'code' => ResponseCode::SUCCESS,
-            'msg' => ResponseCode::getMessage(ResponseCode::SUCCESS)
+            'code' => ResponseCode::CODE_SUCCESS,
+            'msg' => ResponseCode::getMessage(ResponseCode::CODE_SUCCESS)
         ], $response);
     }
 }
