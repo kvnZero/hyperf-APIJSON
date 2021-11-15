@@ -3,7 +3,10 @@
 namespace App\ApiJson\Method;
 
 use App\ApiJson\Interface\QueryInterface;
+use App\Event\ApiJson\QueryExecuteAfter;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class DeleteMethod extends AbstractMethod
 {
@@ -34,6 +37,11 @@ class DeleteMethod extends AbstractMethod
             $this->buildQuery();
             $this->query->delete($id) && $deletedIds[] = $id; //这里主键应可配置
         }
-        return $this->parseManyResponse($deletedIds, $queryMany);
+        $result = $this->parseManyResponse($deletedIds, $queryMany);
+
+        $event = new QueryExecuteAfter($this->query->toSql(), $result);
+        ApplicationContext::getContainer()->get(EventDispatcherInterface::class)->dispatch($event);
+
+        return $result;
     }
 }

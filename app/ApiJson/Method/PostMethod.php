@@ -2,7 +2,10 @@
 
 namespace App\ApiJson\Method;
 
+use App\Event\ApiJson\QueryExecuteAfter;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class PostMethod extends AbstractMethod
 {
@@ -25,6 +28,11 @@ class PostMethod extends AbstractMethod
         foreach ($insertData as $insertItem) {
             $insertIds[] = $this->query->insertGetId($insertItem); //因为需要返回ID 直接insert($insertData)不能得到本次插入的ID 未找到相关可用方法替代
         }
-        return $this->parseManyResponse($insertIds, $this->isQueryMany());
+        $result = $this->parseManyResponse($insertIds, $this->isQueryMany());
+
+        $event = new QueryExecuteAfter($this->query->toSql(), $result);
+        ApplicationContext::getContainer()->get(EventDispatcherInterface::class)->dispatch($event);
+
+        return $result;
     }
 }
