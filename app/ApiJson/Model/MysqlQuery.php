@@ -12,6 +12,9 @@ class MysqlQuery implements QueryInterface
     /** @var string $primaryKey */
     protected string $primaryKey = 'id';
 
+    /** @var bool $build 是否已经生成条件 */
+    protected bool $build = false;
+
     /** @var Builder $db */
     protected Builder $db;
 
@@ -54,11 +57,13 @@ class MysqlQuery implements QueryInterface
 
     public function insertGetId(array $values, $sequence = null): int
     {
+        $this->build = true;
         return $this->db->insertGetId($values, $sequence);
     }
 
     public function update(array $values): bool
     {
+        $this->build = true;
         $this->buildQuery(false);
         if (empty($this->db->getBindings()['where'])) return false; // 不允许空条件修改
         return $this->db->update($values);
@@ -66,6 +71,7 @@ class MysqlQuery implements QueryInterface
 
     public function delete($id = null): bool
     {
+        $this->build = true;
         return $this->db->delete($id);
     }
 
@@ -88,6 +94,8 @@ class MysqlQuery implements QueryInterface
 
     protected function buildQuery(bool $query = true)
     {
+        if ($this->build) return;
+        $this->build = true;
         $queryWhere = $this->conditionEntity->getQueryWhere();
         foreach ($queryWhere as $itemWhere) {
             $this->db->whereRaw($itemWhere['sql'], $itemWhere['bind']);

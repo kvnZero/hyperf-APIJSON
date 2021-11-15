@@ -2,7 +2,10 @@
 
 namespace App\ApiJson\Method;
 
+use App\Event\ApiJson\QueryExecuteAfter;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class PutMethod extends AbstractMethod
 {
@@ -41,6 +44,11 @@ class PutMethod extends AbstractMethod
                 $this->query->update($updateItem) && $updateIds[] = $id;
             }
         }
-        return $this->parseManyResponse($updateIds, $queryMany);
+        $result = $this->parseManyResponse($updateIds, $queryMany);
+
+        $event = new QueryExecuteAfter($this->query->toSql(), $result);
+        ApplicationContext::getContainer()->get(EventDispatcherInterface::class)->dispatch($event);
+
+        return $result;
     }
 }
