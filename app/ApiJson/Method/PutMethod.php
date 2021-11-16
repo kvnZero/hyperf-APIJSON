@@ -46,7 +46,7 @@ class PutMethod extends AbstractMethod
         }
         $result = $this->parseManyResponse($updateIds, $queryMany);
 
-        $event = new QueryExecuteAfter($this->query->toSql(), $result);
+        $event = new QueryExecuteAfter($this->query->toSql(), $this->method, $result);
         ApplicationContext::getContainer()->get(EventDispatcherInterface::class)->dispatch($event);
 
         return $result;

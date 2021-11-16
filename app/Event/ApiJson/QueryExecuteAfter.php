@@ -7,7 +7,7 @@ namespace App\Event\ApiJson;
  */
 class QueryExecuteAfter
 {
-    public function __construct(public string $sql, public $result)
+    public function __construct(public string $sql, public string $method, public $result)
     {
     }
 }

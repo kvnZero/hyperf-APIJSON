@@ -30,7 +30,7 @@ class PostMethod extends AbstractMethod
         }
         $result = $this->parseManyResponse($insertIds, $this->isQueryMany());
 
-        $event = new QueryExecuteAfter($this->query->toSql(), $result);
+        $event = new QueryExecuteAfter($this->query->toSql(), $this->method, $result);
         ApplicationContext::getContainer()->get(EventDispatcherInterface::class)->dispatch($event);
 
         return $result;
