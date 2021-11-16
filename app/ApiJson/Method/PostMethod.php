@@ -33,6 +33,6 @@ class PostMethod extends AbstractMethod
         $event = new QueryExecuteAfter($this->query->toSql(), $this->method, $result);
         ApplicationContext::getContainer()->get(EventDispatcherInterface::class)->dispatch($event);
 
-        return $result;
+        return $event->result;
     }
 }

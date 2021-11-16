@@ -325,4 +325,46 @@ class GetTest extends TestCase
             ],
         ], $result);
     }
+
+    public function testWhereIdSubQuery()
+    {
+        $json = [
+            "User" => [
+                "id@" => [
+                    "from" =>"Comment",
+                    "Comment" => [
+                        "@column" =>"min(userId)"
+                    ]
+                ]
+            ]
+        ];
+        $parse = new Parse($json, $this->method, '');
+        $result = $parse->handle();
+
+        $this->assertSame([
+            "User" => [
+                "id" =>38710,
+                "sex" =>0,
+                "name" =>"TommyLemon",
+                "tag" =>"Android&Java",
+                "head" =>"http://static.oschina.net/uploads/user/1218/2437072_100.jpg?t=1461076033000",
+                "contactIdList" =>[
+                    82003,
+                    82005,
+                    90814,
+                    82004,
+                    82009,
+                    82002,
+                    82044,
+                    93793,
+                    70793
+                ],
+                "pictureList" =>[
+                    "http://static.oschina.net/uploads/user/1218/2437072_100.jpg?t=1461076033000",
+                    "http://common.cnblogs.com/images/icon_weibo_24.png"
+                ],
+                "date" =>"2017-02-01 11:21:50"
+            ]
+        ], $result);
+    }
 }
