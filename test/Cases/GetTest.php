@@ -17,46 +17,103 @@ use PHPUnit\Framework\TestCase;
 /**
  * @internal
  * @coversNothing
+ * @link:https://github.com/kvnZero/hyperf-APIJSON/issues/6
  */
 class GetTest extends TestCase
 {
     protected string $method = 'GET';
 
-    public function testColumn()
+    public function testWhereExists()
     {
         $json = [
-            'User' => [
-                'id' => 1,
-                '@column' => 'id'
+            "[]" => [
+                "User" => [
+                    "id}{@" => [
+                        "from" =>"Comment",
+                        "Comment" => [
+                            "momentId" =>15,
+                            "@column" =>"userId"
+                        ]
+                    ],
+                    "@column" =>"id,sex,name"
+                ]
             ]
         ];
         $parse = new Parse($json, $this->method, '');
         $result = $parse->handle();
 
         $this->assertSame([
-            'User' => [
-                'id' => 1
-            ]
-        ], $result);
-    }
-
-    public function testWhere()
-    {
-        $json = [
-            'User' => [
-                'id' => 1
-            ]
-        ];
-        $parse = new Parse($json, $this->method, '');
-        $result = $parse->handle();
-
-        $this->assertSame([
-            'User' => [
-                'id' => 1,
-                'username' => 'abigeater',
-                'email' => 'abigeater@163.com',
-                'password' => '1',
-                'create_time' => '2021-11-02 06:57:56'
+            "[]" =>[
+                [
+                    "User" => [
+                        "id" =>38710,
+                        "sex" =>0,
+                        "name" =>"TommyLemon"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>70793,
+                        "sex" =>0,
+                        "name" =>"Strong"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82001,
+                        "sex" =>0,
+                        "name" =>"测试账号"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82002,
+                        "sex" =>1,
+                        "name" =>"Happy~"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82003,
+                        "sex" =>0,
+                        "name" =>"Wechat"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82004,
+                        "sex" =>0,
+                        "name" =>"Tommy"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82005,
+                        "sex" =>1,
+                        "name" =>"Jan"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82006,
+                        "sex" =>1,
+                        "name" =>"Meria"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82009,
+                        "sex" =>0,
+                        "name" =>"God"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82012,
+                        "sex" =>0,
+                        "name" =>"Steve"
+                    ]
+                ]
             ]
         ], $result);
     }
@@ -64,231 +121,208 @@ class GetTest extends TestCase
     public function testWhereIn()
     {
         $json = [
-            'User[]' => [
-                'id{}' => [1,2]
-            ]
-        ];
-        $parse = new Parse($json, $this->method, '');
-        $result = $parse->handle();
-
-        $this->assertSame([
-            'User[]' => [
-                [
-                    'id' => 1,
-                    'username' => 'abigeater',
-                    'email' => 'abigeater@163.com',
-                    'password' => '1',
-                    'create_time' => '2021-11-02 06:57:56'
-                ]
-            ]
-        ], $result);
-    }
-
-    public function testWhereQueryMany()
-    {
-        $json = [
-            'User[]' => [
-            ]
-        ];
-        $parse = new Parse($json, $this->method, '');
-        $result = $parse->handle();
-
-        $this->assertSame([
-            'User[]' => [
-                [
-                    'id' => 1,
-                    'username' => 'abigeater',
-                    'email' => 'abigeater@163.com',
-                    'password' => '1',
-                    'create_time' => '2021-11-02 06:57:56'
-                ]
-            ]
-        ], $result);
-    }
-
-    public function testWhereCondition()
-    {
-        $json = [
-            'User' => [
-                'id{}' => '>0,<=1'
-            ]
-        ];
-        $parse = new Parse($json, $this->method, '');
-        $result = $parse->handle();
-
-        $this->assertSame([
-            'User' => [
-                'id' => 1,
-                'username' => 'abigeater',
-                'email' => 'abigeater@163.com',
-                'password' => '1',
-                'create_time' => '2021-11-02 06:57:56'
-            ]
-        ], $result);
-
-        $json = [
-            'User' => [
-                'id{}' => '>1,<1'
-            ]
-        ];
-        $parse = new Parse($json, $this->method, '');
-        $result = $parse->handle();
-
-        $this->assertSame([
-            'User' => []
-        ], $result);
-    }
-
-    public function testWhereArray()
-    {
-        $json = [
-            '[]' => [
-                'count'=> 10,
-                'page' => 1,
-                'User' => [
-                    'username' => 'abigeater'
-                ]
-            ]
-        ];
-        $parse = new Parse($json, $this->method, '');
-        $result = $parse->handle();
-
-        $this->assertSame([
-            '[]' => [
-                 [
-                     'User' => [
-                         'id' => 1,
-                         'username' => 'abigeater',
-                         'email' => 'abigeater@163.com',
-                         'password' => '1',
-                         'create_time' => '2021-11-02 06:57:56'
-                     ]
-                ]
-            ]
-        ], $result);
-    }
-
-    public function testQueryManyTable()
-    {
-        $json = [
-            'User' => [
-                'username' => 'abigeater'
-            ],
-            'Message' => [
-            ],
-        ];
-        $parse = new Parse($json, $this->method, '');
-        $result = $parse->handle();
-
-        $this->assertSame([
-            'User' => [
-                'id' => 1,
-                'username' => 'abigeater',
-                'email' => 'abigeater@163.com',
-                'password' => '1',
-                'create_time' => '2021-11-02 06:57:56'
-            ],
-            'Message' => [
-                'id' => 12,
-                'user_id' => 1,
-                'watched_message_id' => '2'
-            ]
-        ], $result);
-    }
-
-    public function testQueryOneOne()
-    {
-        $json = [
-            'Message' => [
-            ],
-            'User' => [
-                'id@' => 'Message/user_id'
-            ],
-        ];
-        $parse = new Parse($json, $this->method, '');
-        $result = $parse->handle();
-
-        $this->assertSame([
-            'Message' => [
-                'id' => 12,
-                'user_id' => 1,
-                'watched_message_id' => '2'
-            ],
-            'User' => [
-                'id' => 1,
-                'username' => 'abigeater',
-                'email' => 'abigeater@163.com',
-                'password' => '1',
-                'create_time' => '2021-11-02 06:57:56'
-            ]
-        ], $result);
-    }
-
-    public function testQueryOneMany()
-    {
-        $json = [
-            'User' => [
-                'id' => 1
-            ],
-            '[]' => [
-                'Message' => [
-                    "user_id@" => "User/id"
-                ],
-            ]
-        ];
-        $parse = new Parse($json, $this->method, '');
-        $result = $parse->handle();
-
-        $this->assertSame([
-            'User' => [
-                'id' => 1,
-                'username' => 'abigeater',
-                'email' => 'abigeater@163.com',
-                'password' => '1',
-                'create_time' => '2021-11-02 06:57:56'
-            ],
-            '[]' => [
-                [
-                    'Message' => [
-                        'id' => 12,
-                        'user_id' => 1,
-                        'watched_message_id' => '2'
+            "[]" => [
+                "User" => [
+                    "id{}@" => [
+                        "from" =>"Comment",
+                        "Comment" => [
+                            "momentId" =>15,
+                            "@column" =>"userId"
+                        ]
                     ],
+                    "@column" =>"id,sex,name"
                 ]
-            ]
-        ], $result);
-    }
-
-    public function testQueryArrayOneOne()
-    {
-        $json = [
-            '[]' => [
-                'Message' => [],
-                'User' => [
-                    "id@" => "[]/Message/user_id"
-                ],
             ]
         ];
         $parse = new Parse($json, $this->method, '');
         $result = $parse->handle();
 
         $this->assertSame([
-            '[]' => [
+            "[]" =>[
                 [
-                    'Message' => [
-                        'id' => 12,
-                        'user_id' => 1,
-                        'watched_message_id' => '2'
-                    ],
-                    'User' => [
-                        'id' => 1,
-                        'username' => 'abigeater',
-                        'email' => 'abigeater@163.com',
-                        'password' => '1',
-                        'create_time' => '2021-11-02 06:57:56'
+                    "User" => [
+                        "id" =>38710,
+                        "sex" =>0,
+                        "name" =>"TommyLemon"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82001,
+                        "sex" =>0,
+                        "name" =>"测试账号"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82002,
+                        "sex" =>1,
+                        "name" =>"Happy~"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82003,
+                        "sex" =>0,
+                        "name" =>"Wechat"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82055,
+                        "sex" =>1,
+                        "name" =>"Solid"
                     ]
                 ]
             ]
+        ], $result);
+    }
+
+    public function testWhereInUseSubQuery()
+    {
+        $json = [
+            "subquery@" => [
+                "from" =>"Comment",
+                "Comment" => [
+                    "momentId" =>15,
+                    "@column" =>"userId"
+                ]
+            ],
+            "User[]" => [
+                "User" => [
+                    "id{}@" =>"subquery",
+                    "@column" =>"id,sex,name"
+                ]
+            ],
+            "[]" =>null
+        ];
+        $parse = new Parse($json, $this->method, '');
+        $result = $parse->handle();
+
+        $this->assertSame([
+            "User[]" =>[
+                [
+                    "id" =>38710,
+                    "sex" =>0,
+                    "name" =>"TommyLemon"
+                ],
+                [
+                    "id" =>82001,
+                    "sex" =>0,
+                    "name" =>"测试账号"
+                ],
+                [
+                    "id" =>82002,
+                    "sex" =>1,
+                    "name" =>"Happy~"
+                ],
+                [
+                    "id" =>82003,
+                    "sex" =>0,
+                    "name" =>"Wechat"
+                ],
+                [
+                    "id" =>82055,
+                    "sex" =>1,
+                    "name" =>"Solid"
+                ]
+            ]
+        ], $result);
+    }
+
+    public function testWhereExistsUseSubQuery()
+    {
+        $json = [
+            "subquery@" => [
+                "from" =>"Comment",
+                "Comment" => [
+                    "momentId" =>15,
+                    "@column" =>"userId"
+                ]
+            ],
+            "[]" => [
+                "User" => [
+                    "id}{@" =>"subquery",
+                    "@column" =>"id,sex,name"
+                ]
+            ]
+        ];
+        $parse = new Parse($json, $this->method, '');
+        $result = $parse->handle();
+
+        $this->assertSame([
+            "[]" =>[
+                [
+                    "User" => [
+                        "id" =>38710,
+                        "sex" =>0,
+                        "name" =>"TommyLemon"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>70793,
+                        "sex" =>0,
+                        "name" =>"Strong"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82001,
+                        "sex" =>0,
+                        "name" =>"测试账号"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82002,
+                        "sex" =>1,
+                        "name" =>"Happy~"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82003,
+                        "sex" =>0,
+                        "name" =>"Wechat"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82004,
+                        "sex" =>0,
+                        "name" =>"Tommy"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82005,
+                        "sex" =>1,
+                        "name" =>"Jan"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82006,
+                        "sex" =>1,
+                        "name" =>"Meria"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82009,
+                        "sex" =>0,
+                        "name" =>"God"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82012,
+                        "sex" =>0,
+                        "name" =>"Steve"
+                    ]
+                ]
+            ],
         ], $result);
     }
 }

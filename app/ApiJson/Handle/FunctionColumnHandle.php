@@ -16,7 +16,7 @@ class FunctionColumnHandle extends AbstractHandle
         }, ARRAY_FILTER_USE_KEY) as $key => $value)
         {
             $value = str_replace([';',':'], [',', ' AS '], $value);
-            $this->condition->setColumn(explode(',', $value));
+            $this->condition->setColumn($value);
             $this->unsetKey[] = $this->keyWord;
         }
     }

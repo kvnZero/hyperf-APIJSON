@@ -11,9 +11,9 @@ class ConditionEntity
      */
     protected array $where = [];
 
-    protected int $limit = 0;
+    protected int $limit = 10;
     protected int $offset = 0;
-    protected array $column = ['*'];
+    protected string $column = '*';
     protected array $group = [];
     protected array $order = [];
     protected array $having = [];
@@ -60,9 +60,9 @@ class ConditionEntity
     }
 
     /**
-     * @param array|string[] $column
+     * @param string $column
      */
-    public function setColumn(array $column): void
+    public function setColumn(string $column): void
     {
         $this->column = $column;
     }
@@ -108,9 +108,9 @@ class ConditionEntity
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getColumn(): array
+    public function getColumn(): string
     {
         return $this->column;
     }
