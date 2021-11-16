@@ -102,7 +102,7 @@ class MysqlQuery implements QueryInterface
         }
         if (!$query) return; //下面不再非查询操作
 
-        $this->db->select($this->conditionEntity->getColumn());
+        $this->db->select(Db::raw($this->conditionEntity->getColumn()));
         $limit = $this->conditionEntity->getLimit();
         if ($limit > 0) {
             $this->db->limit($limit);
