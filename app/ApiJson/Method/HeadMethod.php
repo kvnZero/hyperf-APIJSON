@@ -33,7 +33,7 @@ class HeadMethod extends AbstractMethod
         ApplicationContext::getContainer()->get(EventDispatcherInterface::class)->dispatch($event);
 
         return [
-            'count' => $count
+            'count' => $event->result
         ];
     }
 }
