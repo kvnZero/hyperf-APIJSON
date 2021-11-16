@@ -9,9 +9,10 @@ class QuoteReplace extends AbstractReplace
         $condition = $this->condition->getCondition();
 
         foreach (array_filter($condition, function($key){
-            return str_ends_with($key, '@') && !str_ends_with($key, '}{@');
+            return str_ends_with($key, '@') && !str_ends_with($key, '}{@') && !str_ends_with($key, '{}@');
         }, ARRAY_FILTER_USE_KEY) as $key => $value)
         {
+            if (!is_string($value)) continue;
             $path = str_replace(['/', '[]'], ['.', 'currentItem'], $value);
             if (str_starts_with($path, '.')) {
                 $path = 'currentItem' . $path;

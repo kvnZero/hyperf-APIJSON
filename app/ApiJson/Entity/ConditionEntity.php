@@ -11,7 +11,7 @@ class ConditionEntity
      */
     protected array $where = [];
 
-    protected int $limit = 0;
+    protected int $limit = 10;
     protected int $offset = 0;
     protected array $column = ['*'];
     protected array $group = [];

@@ -65,7 +65,9 @@ abstract class AbstractHandle
     {
         $tableName = $data['from'];
         $tableEntity = new TableEntity($tableName, $data);
-        $handle = new Handle($tableEntity->getConditionEntity(), $tableEntity);
+        $conditionEntity = $tableEntity->getConditionEntity();
+        $conditionEntity->setLimit(0);
+        $handle = new Handle($conditionEntity, $tableEntity);
         $handle->build();
         /** @var QueryInterface $query */
         return new (ApplicationContext::getContainer()->get(ConfigInterface::class)->get(QueryInterface::class))($tableEntity->getRealTableName(), $tableEntity->getConditionEntity());
