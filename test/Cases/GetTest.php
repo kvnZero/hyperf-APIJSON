@@ -178,4 +178,55 @@ class GetTest extends TestCase
         ], $result);
     }
 
+    public function testWhereInUseSubQuery()
+    {
+        $json = [
+            "subquery@" => [
+                "from" =>"Comment",
+                "Comment" => [
+                    "momentId" =>15,
+                    "@column" =>"userId"
+                ]
+            ],
+            "User[]" => [
+                "User" => [
+                    "id{}@" =>"subquery",
+                    "@column" =>"id,sex,name"
+                ]
+            ],
+            "[]" =>null
+        ];
+        $parse = new Parse($json, $this->method, '');
+        $result = $parse->handle();
+
+        $this->assertSame([
+            "User[]" =>[
+                [
+                    "id" =>38710,
+                    "sex" =>0,
+                    "name" =>"TommyLemon"
+                ],
+                [
+                    "id" =>82001,
+                    "sex" =>0,
+                    "name" =>"测试账号"
+                ],
+                [
+                    "id" =>82002,
+                    "sex" =>1,
+                    "name" =>"Happy~"
+                ],
+                [
+                    "id" =>82003,
+                    "sex" =>0,
+                    "name" =>"Wechat"
+                ],
+                [
+                    "id" =>82055,
+                    "sex" =>1,
+                    "name" =>"Solid"
+                ]
+            ]
+        ], $result);
+    }
 }

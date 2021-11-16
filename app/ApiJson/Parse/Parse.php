@@ -39,8 +39,12 @@ class Parse
 
     public function handle(bool $isQueryMany = false, array $extendData = []): array
     {
+        if (empty($extendData)) {
+            $extendData = $this->json; //引入原json
+        }
         $result = [];
         foreach ($this->json as $tableName => $condition) { //可以优化成协程行为（如果没有依赖赋值的前提下）
+            if (is_null($condition)) continue;
             if (in_array($tableName, $this->filterKey())) {
                 $this->tagColumn[$tableName] = $condition;
                 continue;
@@ -93,6 +97,7 @@ class Parse
     {
         $result = [[]];
         foreach ($jsonData as $tableName => $condition) { //可以优化成协程行为（如果没有依赖赋值的前提下）
+            if (is_null($condition)) continue;
             if (!preg_match("/^[A-Z].+/", $tableName) || !is_array($condition)) {
                 continue; //不满足表名规范 跳出不往下执行
             }
