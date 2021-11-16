@@ -13,6 +13,9 @@ class QuoteReplace extends AbstractReplace
         }, ARRAY_FILTER_USE_KEY) as $key => $value)
         {
             $path = str_replace(['/', '[]'], ['.', 'currentItem'], $value);
+            if (str_starts_with($path, '.')) {
+                $path = 'currentItem' . $path;
+            }
             $newKey = substr($key, 0, strlen($key) - 1);
             $condition[$newKey] = data_get($this->condition->getExtendData(), $path);
             unset($condition[$key]);

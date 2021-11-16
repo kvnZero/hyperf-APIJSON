@@ -56,9 +56,9 @@ class Parse
             if (str_ends_with($tableName, '[]')) {
                 $isQueryMany = true;
             }
-//            if (!preg_match("/^[A-Za-z]+$/", $tableName) || !is_array($condition)) {
-//                continue; //不满足表名规范 跳出不往下执行
-//            }
+            if (!preg_match("/^[A-Z].+/", $tableName) || !is_array($condition)) {
+                continue; //不满足表名规范 跳出不往下执行
+            }
             $this->tableEntities[$tableName] = new TableEntity($tableName, $this->json, $this->getGlobalArgs(), array_merge($result, $extendData));
             foreach ($this->supMethod as $methodClass) {
                 /** @var AbstractMethod $method */
@@ -93,6 +93,9 @@ class Parse
     {
         $result = [[]];
         foreach ($jsonData as $tableName => $condition) { //可以优化成协程行为（如果没有依赖赋值的前提下）
+            if (!preg_match("/^[A-Z].+/", $tableName) || !is_array($condition)) {
+                continue; //不满足表名规范 跳出不往下执行
+            }
             foreach ($result as $key => $item) {
                 if (in_array($tableName, $this->filterKey())) {
                     $this->tagColumn[$tableName] = $condition;
