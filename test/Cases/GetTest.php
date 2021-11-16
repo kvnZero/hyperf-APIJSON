@@ -23,7 +23,7 @@ class GetTest extends TestCase
 {
     protected string $method = 'GET';
 
-    public function testWhereExist()
+    public function testWhereExists()
     {
         $json = [
             "[]" => [
@@ -227,6 +227,102 @@ class GetTest extends TestCase
                     "name" =>"Solid"
                 ]
             ]
+        ], $result);
+    }
+
+    public function testWhereExistsUseSubQuery()
+    {
+        $json = [
+            "subquery@" => [
+                "from" =>"Comment",
+                "Comment" => [
+                    "momentId" =>15,
+                    "@column" =>"userId"
+                ]
+            ],
+            "[]" => [
+                "User" => [
+                    "id}{@" =>"subquery",
+                    "@column" =>"id,sex,name"
+                ]
+            ]
+        ];
+        $parse = new Parse($json, $this->method, '');
+        $result = $parse->handle();
+
+        $this->assertSame([
+            "[]" =>[
+                [
+                    "User" => [
+                        "id" =>38710,
+                        "sex" =>0,
+                        "name" =>"TommyLemon"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>70793,
+                        "sex" =>0,
+                        "name" =>"Strong"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82001,
+                        "sex" =>0,
+                        "name" =>"测试账号"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82002,
+                        "sex" =>1,
+                        "name" =>"Happy~"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82003,
+                        "sex" =>0,
+                        "name" =>"Wechat"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82004,
+                        "sex" =>0,
+                        "name" =>"Tommy"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82005,
+                        "sex" =>1,
+                        "name" =>"Jan"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82006,
+                        "sex" =>1,
+                        "name" =>"Meria"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82009,
+                        "sex" =>0,
+                        "name" =>"God"
+                    ]
+                ],
+                [
+                    "User" => [
+                        "id" =>82012,
+                        "sex" =>0,
+                        "name" =>"Steve"
+                    ]
+                ]
+            ],
         ], $result);
     }
 }
