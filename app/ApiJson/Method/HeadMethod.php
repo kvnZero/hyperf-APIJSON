@@ -29,7 +29,7 @@ class HeadMethod extends AbstractMethod
             $count = $event->result;
         }
 
-        $event = new QueryExecuteAfter($this->query->toSql(), $count);
+        $event = new QueryExecuteAfter($this->query->toSql(), $this->method, $count);
         ApplicationContext::getContainer()->get(EventDispatcherInterface::class)->dispatch($event);
 
         return [
