@@ -4,8 +4,12 @@ namespace App\ApiJson\Model;
 
 use App\ApiJson\Entity\ConditionEntity;
 use App\ApiJson\Interface\QueryInterface;
+use App\Event\ApiJson\MysqlQueryAfter;
 use Hyperf\Database\Query\Builder;
 use Hyperf\DbConnection\Db;
+use Hyperf\Utils\ApplicationContext;
+use PDO;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class MysqlQuery implements QueryInterface
 {
@@ -21,6 +25,11 @@ class MysqlQuery implements QueryInterface
     public function __construct(protected string $tableName, protected ConditionEntity $conditionEntity)
     {
         $this->db = Db::table($tableName);
+    }
+
+    public function getDb(): Builder
+    {
+        return $this->db;
     }
 
     /**
@@ -39,14 +48,20 @@ class MysqlQuery implements QueryInterface
         return $this->primaryKey;
     }
 
-    public function getDb(): Builder
+    public function all(): array
     {
-        return $this->db;
-    }
+        $this->buildQuery();
 
-    public function query(): array
-    {
-        return $this->db->get()->all();
+        $pdo = $this->db->getConnection()->getReadPdo(); //为了实现自动解析Json 找不到Hyperf的能提供的能力 则手动拿PDO处理
+
+        $statement = $pdo->prepare($this->toSql());
+        $statement->execute($this->getBindings());
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        $event = new MysqlQueryAfter($result, $statement, $this->toSql(), $this->getBindings()); //这可能并不是很好的写法 待暂无其他思路去实现
+        ApplicationContext::getContainer()->get(EventDispatcherInterface::class)->dispatch($event);
+
+        return $event->result;
     }
 
     public function count($columns = '*'): int
@@ -55,7 +70,13 @@ class MysqlQuery implements QueryInterface
         return $this->db->count();
     }
 
-    public function insertGetId(array $values, $sequence = null): int
+    public function toSql(): string
+    {
+        $this->buildQuery();
+        return $this->db->toSql();
+    }
+
+    public function insert(array $values, $sequence = null): int
     {
         $this->build = true;
         return $this->db->insertGetId($values, $sequence);
@@ -73,18 +94,6 @@ class MysqlQuery implements QueryInterface
     {
         $this->build = true;
         return $this->db->delete($id);
-    }
-
-    public function all(): array
-    {
-        $this->buildQuery();
-        return $this->db->get()->all();
-    }
-
-    public function toSql(): string
-    {
-        $this->buildQuery();
-        return $this->db->toSql();
     }
 
     public function getBindings(): array

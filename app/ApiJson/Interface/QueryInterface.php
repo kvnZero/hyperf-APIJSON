@@ -14,7 +14,7 @@ interface QueryInterface
 
     public function count($columns = '*'): int;
 
-    public function insertGetId(array $values, $sequence = null): int;
+    public function insert(array $values, $sequence = null): int;
 
     public function update(array $values): bool;
 
@@ -27,6 +27,4 @@ interface QueryInterface
     public function getBindings();
 
     public function getDb();
-
-    public function query();
 }
