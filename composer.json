@@ -14,6 +14,7 @@
     "require": {
         "php": ">=8.0",
         "ext-json": "*",
+        "ext-pdo": "*",
         "hyperf/cache": "~2.2.0",
         "hyperf/command": "~2.2.0",
         "hyperf/config": "~2.2.0",
@@ -39,7 +40,6 @@
     },
     "suggest": {
         "ext-openssl": "Required to use HTTPS.",
-        "ext-pdo": "Required to use MySQL Client.",
         "ext-pdo_mysql": "Required to use MySQL Client.",
         "ext-redis": "Required to use Redis Client."
     },

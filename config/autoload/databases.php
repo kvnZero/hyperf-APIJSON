@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 return [
     'default' => [
-        'driver' => env('DB_DRIVER', 'mysql'),
+        'driver' => env('DB_DRIVER', 'pdo'),
         'host' => env('DB_HOST', 'localhost'),
         'database' => env('DB_DATABASE', 'hyperf'),
         'port' => env('DB_PORT', 3306),
