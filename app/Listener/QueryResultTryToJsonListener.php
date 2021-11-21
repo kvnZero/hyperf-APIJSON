@@ -35,7 +35,11 @@ class QueryResultTryToJsonListener implements ListenerInterface
             return !isset($item['native_type']) && in_array('blob', $item['flags']);
         }, ARRAY_FILTER_USE_BOTH) as $item) {
             for ($i = 0; $i < count($event->result); $i++) {
-                $event->result[$i][$item['name']] = json_decode($event->result[$i][$item['name']], true);
+                if (!is_string($event->result[$i][$item['name']])) continue;
+                $jsonData = json_decode($event->result[$i][$item['name']], true);
+                if (is_array($jsonData)) {
+                    $event->result[$i][$item['name']] = $jsonData;
+                }
             }
         }
     }
