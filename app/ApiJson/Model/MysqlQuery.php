@@ -4,12 +4,8 @@ namespace App\ApiJson\Model;
 
 use App\ApiJson\Entity\ConditionEntity;
 use App\ApiJson\Interface\QueryInterface;
-use App\Event\ApiJson\MysqlQueryAfter;
 use Hyperf\Database\Query\Builder;
 use Hyperf\DbConnection\Db;
-use Hyperf\Utils\ApplicationContext;
-use PDO;
-use Psr\EventDispatcher\EventDispatcherInterface;
 
 class MysqlQuery implements QueryInterface
 {
@@ -51,17 +47,7 @@ class MysqlQuery implements QueryInterface
     public function all(): array
     {
         $this->buildQuery();
-
-        $pdo = $this->db->getConnection()->getReadPdo(); //为了实现自动解析Json 找不到Hyperf的能提供的能力 则手动拿PDO处理
-
-        $statement = $pdo->prepare($this->toSql());
-        $statement->execute($this->getBindings());
-        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-        $event = new MysqlQueryAfter($result, $statement, $this->toSql(), $this->getBindings()); //这可能并不是很好的写法 待暂无其他思路去实现
-        ApplicationContext::getContainer()->get(EventDispatcherInterface::class)->dispatch($event);
-
-        return $event->result;
+        return $this->db->get()->all();
     }
 
     public function count($columns = '*'): int
