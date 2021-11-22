@@ -5,6 +5,7 @@ namespace App\ApiJson\Method;
 use App\ApiJson\Parse\Handle;
 use App\Event\ApiJson\QueryExecuteAfter;
 use App\Event\ApiJson\QueryExecuteBefore;
+use App\Event\ApiJson\QueryResult;
 use Hyperf\Utils\ApplicationContext;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -31,6 +32,11 @@ class GetMethod extends AbstractMethod
 
         if(is_null($event->result)) {
             $result = $this->query->all();
+
+            $queryEvent = new QueryResult($result);
+            ApplicationContext::getContainer()->get(EventDispatcherInterface::class)->dispatch($queryEvent);
+
+            $result = $queryEvent->result;
         } else {
             $result = $event->result;
         }

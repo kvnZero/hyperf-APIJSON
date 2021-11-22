@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace App\Listener;
 
-use App\Event\ApiJson\MysqlQueryAfter;
+use App\Constants\ConfigCode;
+use App\Event\ApiJson\QueryResult;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Utils\Context;
 
 /**
  * @Listener
@@ -15,17 +17,23 @@ class QueryResultTryToJsonListener implements ListenerInterface
     public function listen(): array
     {
         return [
-            MysqlQueryAfter::class,
+            QueryResult::class,
         ];
     }
 
     public function process(object $event)
     {
-        if (!$event instanceof MysqlQueryAfter) return;
+        if (!$event instanceof QueryResult) return;
+
+        $statement = Context::get(ConfigCode::DB_QUERY_STATEMENT);
+        if (empty($statement)) {
+            return;
+        }
+
         $columnCount = count(array_keys(current($event->result)));
         $columnMeta = [];
         for ($i = 0; $i <= $columnCount; $i++) {
-            $meta = $event->statement->getColumnMeta($i);
+            $meta = $statement->getColumnMeta($i);
             if ($meta) {
                 $columnMeta[$meta['name']] = $meta;
             }
