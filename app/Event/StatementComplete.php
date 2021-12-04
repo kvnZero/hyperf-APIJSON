@@ -8,7 +8,7 @@ declare(strict_types=1);
  * @time     2021/12/4 5:25 下午
  */
 
-namespace App\Event\ApiJson;
+namespace App\Event;
 
 class StatementComplete
 {

@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database;
 
-use App\Event\ApiJson\StatementComplete;
+use App\Event\StatementComplete;
 use Closure;
 use DateTimeInterface;
 use Doctrine\DBAL\Connection as DoctrineConnection;
