@@ -3,11 +3,9 @@ declare(strict_types=1);
 
 namespace App\Listener;
 
-use App\Constants\ConfigCode;
-use App\Event\ApiJson\QueryResult;
+use App\Event\StatementComplete;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Utils\Context;
 
 /**
  * @Listener
@@ -17,18 +15,15 @@ class QueryResultTryToJsonListener implements ListenerInterface
     public function listen(): array
     {
         return [
-            QueryResult::class,
+            StatementComplete::class,
         ];
     }
 
     public function process(object $event)
     {
-        if (!$event instanceof QueryResult) return;
-
-        $statement = Context::get(ConfigCode::DB_QUERY_STATEMENT);
-        if (empty($statement)) {
-            return;
-        }
+        if (!$event instanceof StatementComplete) return;
+        if (empty($event->result)) return;
+        $statement = $event->statement;
 
         $columnCount = count(array_keys(current($event->result)));
         $columnMeta = [];

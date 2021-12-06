@@ -87,6 +87,50 @@ class MysqlQuery implements QueryInterface
         return $this->db->getBindings();
     }
 
+    public function callProcedure(array $dataItem, bool $query = true): array
+    {
+        if (empty($this->conditionEntity->getProcedure())) {
+            return [];
+        }
+        $count = -1;
+        $list = []; //默认值
+
+        $procedure = $this->conditionEntity->getProcedure();
+        $rule = '/(?<functionName>.+)\((?<args>.+?)\)/';
+        preg_match($rule, $procedure, $match);
+        if (empty($match['functionName'])) {
+            return [];
+        }
+        $args = array_map('trim', explode(',', $match['args']));
+
+        $callArgs = [];
+        foreach ($args as $arg) {
+            if (in_array($arg, array_keys($dataItem))) {
+                $callArgs[] = $dataItem[$arg];
+            } else if ($arg == '@limit') {
+                $callArgs[] = $this->conditionEntity->getLimit();
+            } else if ($arg == '@offset') {
+                $callArgs[] = $this->conditionEntity->getOffset();
+            } else {
+                $callArgs[] = $arg;
+            }
+        }
+
+        $sql = sprintf("CALL %s(%s)", $match['functionName'], join(',', $callArgs));
+
+        if ($query) {
+            $list = Db::select($sql);
+        } else {
+            $count = Db::affectingStatement($sql);
+        }
+
+        return [
+            'count' => $count,
+            'update' => !$query,
+            'list' => $list,
+        ];
+    }
+
     protected function buildQuery(bool $query = true)
     {
         if ($this->build) return;

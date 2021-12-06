@@ -9,7 +9,7 @@ use PDOStatement;
  */
 class QueryResult
 {
-    public function __construct(public array $result)
+    public function __construct(public array $result, public string $sql)
     {
     }
 }

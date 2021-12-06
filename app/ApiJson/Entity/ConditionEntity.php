@@ -17,6 +17,7 @@ class ConditionEntity
     protected array $group = [];
     protected array $order = [];
     protected array $having = [];
+    protected string $procedure = "";
 
     /**
      * @param array $condition 条件
@@ -153,6 +154,22 @@ class ConditionEntity
     public function getOrder(): array
     {
         return $this->order;
+    }
+
+    /**
+     * @param string $procedure
+     */
+    public function setProcedure(string $procedure): void
+    {
+        $this->procedure = $procedure;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProcedure(): string
+    {
+        return $this->procedure;
     }
 
     protected function log(array $condition)
