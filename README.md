@@ -32,18 +32,16 @@
 
 https://github.com/Tencent/APIJSON
 
-
 ### 开发进度
 
-1. ✅最基本CRUD 包括批量写入 批量更新 批量删除
+1. ✅最基本CRUD 包括批量写入 批量更新 批量删除 存储过程调用
 2. ✅支持@column @having @order @group @combine
 3. ✅支持运算符 {}, !{}, &{}, |{}, }{@, $, %, ~
 4. ✅支持多表查询、一对一查询、一对多查询、数组内多对多查询
 5. ✅支持数组内count/page
 6. ✅支持debug标签可返回语句执行
 
-待完成：<b>复杂查询</b>, 存储过程调用，远程函数，权限，标签
-
+待完成：<b>复杂查询</b>，Join查询，远程函数，权限，标签
 
 ### 如何使用 
 
@@ -52,7 +50,7 @@ APIJSON通用文档（增删改查说明）：https://github.com/Tencent/APIJSON
 
 拉取该项目, 配置mysql数据库, 配置文件路径：`config\autoload\databases.php`
 
-然后在项目目录执行：(需机器有：docker)
+然后在项目目录执行：(需宿主机有：docker)
 
 ```shell
 # 打包镜像
@@ -61,7 +59,7 @@ docker build -t hyperf-apijson:v1 .
 docker run -dit --name hyperf-apijson -p 9501:9501 hyperf-apijson:v1
 ```
 
-如果需要进行开发调试，使用Hyperf的Docker环境
+如果需要进行开发调试，使用Hyperf的Docker镜像 - <b>本项目可作为你的给Hyperf基础项目，可在该项目基础上进行业务开发，几乎没有互相冲突</b>
 
 ```shell
 docker run -dit --name hyperf-apijson -v {项目目录}:/opt/www -p 9501:9501 hyperf/hyperf:8.0-alpine-v3.12-swoole
@@ -70,6 +68,8 @@ docker run -dit --name hyperf-apijson -v {项目目录}:/opt/www -p 9501:9501 hy
 进入到docker环境执行 （如果composer下载不动 可以修改到阿里镜像源 Mac下建议本地开发）：
 ```shell
 cd /opt/www
+
 composer update
+
 php bin/hyperf.php start
 ```
