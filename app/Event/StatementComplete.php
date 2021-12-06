@@ -20,6 +20,13 @@ class StatementComplete
     public $connection;
 
     /**
+     * The query result
+     *
+     * @var array|false
+     */
+    public $result;
+
+    /**
      * The PDO statement.
      *
      * @var \PDOStatement
@@ -30,11 +37,13 @@ class StatementComplete
      * Create a new event instance.
      *
      * @param \Hyperf\Database\Connection $connection
+     * @param array|false $result
      * @param \PDOStatement $statement
      */
-    public function __construct($connection, $statement)
+    public function __construct($connection, $result, $statement)
     {
         $this->statement = $statement;
+        $this->result = $result;
         $this->connection = $connection;
     }
 }

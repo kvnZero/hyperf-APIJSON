@@ -15,7 +15,8 @@ class Parse
 {
     protected array $tagColumn = [
         'tag' => null,
-        'debug' => false
+        'debug' => false,
+        'other' => []
     ];
 
     protected array $globalKey = [

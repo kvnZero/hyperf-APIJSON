@@ -286,11 +286,9 @@ class Connection implements ConnectionInterface
 
             $statement->execute();
 
-            $response = $statement->fetchAll();
+            $result = $statement->fetchAll();
 
-            $this->complete($statement);
-
-            return $response;
+            return $this->complete($result, $statement);
         });
     }
 
@@ -318,9 +316,9 @@ class Connection implements ConnectionInterface
             // Next, we'll execute the query against the database and return the statement
             // so we can return the cursor. The cursor will use a PHP generator to give
             // back one row at a time without using a bunch of memory to render them.
-            $statement->execute();
+            $result = $statement->execute();
 
-            $this->complete($statement);
+            $this->complete($result, $statement);
 
             return $statement;
         });
@@ -990,12 +988,15 @@ class Connection implements ConnectionInterface
         return $statement;
     }
 
-    protected function complete(PDOStatement $statement)
+    protected function complete($result, PDOStatement $statement)
     {
-        $this->event(new StatementComplete(
+        $event = new StatementComplete(
             $this,
+            $result,
             $statement
-        ));
+        );
+        $this->event($event);
+        return $event->result;
     }
 
     /**

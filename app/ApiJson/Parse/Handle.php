@@ -20,6 +20,7 @@ use App\ApiJson\Handle\FunctionHavingHandle;
 use App\ApiJson\Handle\FunctionLimitHandle;
 use App\ApiJson\Handle\FunctionOffsetHandle;
 use App\ApiJson\Handle\FunctionOrderHandle;
+use App\ApiJson\Handle\FunctionProcedureHandle;
 use App\ApiJson\Handle\WhereBetweenHandle;
 use App\ApiJson\Handle\WhereExistsHandle;
 use App\ApiJson\Handle\WhereHandle;
@@ -54,6 +55,7 @@ class Handle
      * @var AbstractHandle[]
      */
     protected array $methodRules = [
+        FunctionProcedureHandle::class,
         FunctionColumnHandle::class,
         FunctionHavingHandle::class,
         FunctionOffsetHandle::class,

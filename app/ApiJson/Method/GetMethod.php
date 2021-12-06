@@ -18,13 +18,13 @@ class GetMethod extends AbstractMethod
 
     protected function process()
     {
-        $handle = new Handle($this->tableEntity->getConditionEntity(), $this->tableEntity);
-        $handle->build();
-
         $queryMany = $this->isQueryMany();
         if (!$queryMany) {
             $this->tableEntity->getConditionEntity()->setLimit(1);
         }
+
+        $handle = new Handle($this->tableEntity->getConditionEntity(), $this->tableEntity);
+        $handle->build();
 
         //该事件鼓励是做语句缓存或者事件触发 不赞成修改语句做法 修改语句应在更上层的QueryHandle事件
         $event = new QueryExecuteBefore($this->query->toSql(), $this->method);
@@ -33,10 +33,17 @@ class GetMethod extends AbstractMethod
         if(is_null($event->result)) {
             $result = $this->query->all();
 
-            $queryEvent = new QueryResult($result);
+            $queryEvent = new QueryResult($result, $this->query->toSql());
             ApplicationContext::getContainer()->get(EventDispatcherInterface::class)->dispatch($queryEvent);
 
             $result = $queryEvent->result;
+
+            if (!empty($this->tableEntity->getConditionEntity()->getProcedure())) {
+                foreach ($result as $i => $item) {
+                    $result[$i]['procedure'] = $this->query->callProcedure($item);
+                }
+            }
+
         } else {
             $result = $event->result;
         }
