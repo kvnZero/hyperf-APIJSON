@@ -24,7 +24,7 @@ class GetMethod extends AbstractMethod
         }
 
         $handle = new Handle($this->tableEntity->getConditionEntity(), $this->tableEntity);
-        $handle->build();
+        $handle->buildQuery();
 
         //该事件鼓励是做语句缓存或者事件触发 不赞成修改语句做法 修改语句应在更上层的QueryHandle事件
         $event = new QueryExecuteBefore($this->query->toSql(), $this->method);

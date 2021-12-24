@@ -68,7 +68,7 @@ abstract class AbstractHandle
         $conditionEntity = $tableEntity->getConditionEntity();
         $conditionEntity->setLimit(0);
         $handle = new Handle($conditionEntity, $tableEntity);
-        $handle->build();
+        $handle->buildQuery();
         /** @var QueryInterface $query */
         return new (ApplicationContext::getContainer()->get(ConfigInterface::class)->get(QueryInterface::class))($tableEntity->getRealTableName(), $tableEntity->getConditionEntity());
     }
