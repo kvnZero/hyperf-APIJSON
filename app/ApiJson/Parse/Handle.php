@@ -39,14 +39,18 @@ use App\ApiJson\Replace\QuoteReplace;
 
 class Handle
 {
+
     /**
      * 替换规则
      * @var AbstractReplace[]
      */
     protected array $replaceRules = [
-        KeywordCountReplace::class,
-        KeywordPageReplace::class,
-        QuoteReplace::class,
+        'query' => [
+            KeywordCountReplace::class,
+            KeywordPageReplace::class,
+            QuoteReplace::class,
+        ],
+        'update' => []
     ];
 
 
@@ -54,40 +58,55 @@ class Handle
      * 匹配规则 根据从上自下优先先匹先出
      * @var AbstractHandle[]
      */
-    protected array $methodRules = [
-        FunctionProcedureHandle::class,
-        FunctionColumnHandle::class,
-        FunctionHavingHandle::class,
-        FunctionOffsetHandle::class,
-        FunctionLimitHandle::class,
-        FunctionGroupHandle::class,
-        FunctionOrderHandle::class,
-        WhereJsonContainsHandle::class,
-        WhereBetweenHandle::class,
-        WhereExistsHandle::class,
-        WhereRegexpHandle::class,
-        WhereNotInHandle::class,
-        WhereLikeHandle::class,
-        WhereRawHandle::class,
-        WhereInHandle::class,
-        WhereSubQueryHandle::class,
-        WhereOpHandle::class,
-        WhereHandle::class,
-        FunctionCombineHandle::class
+    protected array $queryMethodRules = [
+        'query' => [
+            FunctionProcedureHandle::class,
+            FunctionColumnHandle::class,
+            FunctionHavingHandle::class,
+            FunctionOffsetHandle::class,
+            FunctionLimitHandle::class,
+            FunctionGroupHandle::class,
+            FunctionOrderHandle::class,
+            WhereJsonContainsHandle::class,
+            WhereBetweenHandle::class,
+            WhereExistsHandle::class,
+            WhereRegexpHandle::class,
+            WhereNotInHandle::class,
+            WhereLikeHandle::class,
+            WhereRawHandle::class,
+            WhereInHandle::class,
+            WhereSubQueryHandle::class,
+            WhereOpHandle::class,
+            WhereHandle::class,
+            FunctionCombineHandle::class
+        ],
+        'update' => [
+
+        ]
     ];
 
     public function __construct(protected ConditionEntity $conditionEntity, protected TableEntity $tableEntity)
     {
     }
 
-    public function build()
+    public function buildQuery()
     {
-        foreach ($this->replaceRules as $replaceRuleClass) {
+        $this->build('query');
+    }
+
+    public function buildUpdate()
+    {
+        $this->build('update');
+    }
+
+    protected function build(string $action)
+    {
+        foreach ($this->replaceRules[$action] ?? [] as $replaceRuleClass) {
             /** @var AbstractReplace $replaceRule */
             $replaceRule = new $replaceRuleClass($this->conditionEntity);
             $replaceRule->handle();
         }
-        foreach ($this->methodRules as $methodRuleClass) {
+        foreach ($this->queryMethodRules[$action] ?? [] as $methodRuleClass) {
             /** @var AbstractHandle $methodRule */
             $methodRule = new $methodRuleClass($this->conditionEntity);
             $methodRule->handle();

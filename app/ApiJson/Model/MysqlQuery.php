@@ -9,6 +9,16 @@ use Hyperf\DbConnection\Db;
 
 class MysqlQuery implements QueryInterface
 {
+    /** @var int 查询行为 */
+    const ACTION_QUERY = 1;
+
+    /** @var int 修改行为 */
+    const ACTION_UPDATE = 2;
+
+    /** @var int 插入行为 */
+    const ACTION_INSERT = 4;
+
+
     /** @var string $primaryKey */
     protected string $primaryKey = 'id';
 
@@ -71,7 +81,7 @@ class MysqlQuery implements QueryInterface
     public function update(array $values): bool
     {
         $this->build = true;
-        $this->buildQuery(false);
+        $this->buildQuery(self::ACTION_UPDATE);
         if (empty($this->db->getBindings()['where'])) return false; // 不允许空条件修改
         return $this->db->update($values);
     }
@@ -131,7 +141,7 @@ class MysqlQuery implements QueryInterface
         ];
     }
 
-    protected function buildQuery(bool $query = true)
+    protected function buildQuery(int $actionType = self::ACTION_QUERY)
     {
         if ($this->build) return;
         $this->build = true;
@@ -139,7 +149,7 @@ class MysqlQuery implements QueryInterface
         foreach ($queryWhere as $itemWhere) {
             $this->db->whereRaw($itemWhere['sql'], $itemWhere['bind']);
         }
-        if (!$query) return; //下面不再非查询操作
+        if ($actionType != self::ACTION_QUERY) return; //下面不再非查询操作
 
         $this->db->select(Db::raw($this->conditionEntity->getColumn()));
         $limit = $this->conditionEntity->getLimit();

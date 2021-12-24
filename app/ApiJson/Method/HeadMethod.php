@@ -18,7 +18,7 @@ class HeadMethod extends AbstractMethod
     protected function process()
     {
         $handle = new Handle($this->tableEntity->getConditionEntity(), $this->tableEntity);
-        $handle->build();
+        $handle->buildQuery();
 
         $event = new QueryExecuteBefore($this->query->toSql(), $this->method);
         ApplicationContext::getContainer()->get(EventDispatcherInterface::class)->dispatch($event);
