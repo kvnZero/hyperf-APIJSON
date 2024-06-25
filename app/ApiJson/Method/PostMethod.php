@@ -26,7 +26,7 @@ class PostMethod extends AbstractMethod
         }
         $insertIds = [];
         foreach ($insertData as $insertItem) {
-            $insertIds[] = $this->query->insertGetId($insertItem); //因为需要返回ID 直接insert($insertData)不能得到本次插入的ID 未找到相关可用方法替代
+            $insertIds[] = $this->query->insert($insertItem); //因为需要返回ID 直接insert($insertData)不能得到本次插入的ID 未找到相关可用方法替代
         }
         $result = $this->parseManyResponse($insertIds, $this->isQueryMany());
 
